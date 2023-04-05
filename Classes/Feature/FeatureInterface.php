@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Feature;
 
 use PAGEmachine\Searchable\Query\QueryInterface;
@@ -30,7 +31,6 @@ interface FeatureInterface
     /**
      * Modifies a query before it is executed
      *
-     * @param QueryInterface $query
      * @return QueryInterface
      */
     public function modifyQuery(QueryInterface $query);

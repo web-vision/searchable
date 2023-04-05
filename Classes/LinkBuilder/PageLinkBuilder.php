@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\LinkBuilder;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -39,13 +40,10 @@ class PageLinkBuilder extends AbstractLinkBuilder
     /**
      * @param array $configuration
      * @param array $record
-     * @return array
      */
-    public function finalizeTypoLinkConfig($configuration, $record)
+    public function finalizeTypoLinkConfig($configuration, $record): array
     {
-        $linkConfiguration = $this->convertFromPageViewHelperConfig($configuration);
-
-        return $linkConfiguration;
+        return $this->convertFromPageViewHelperConfig($configuration);
     }
 
     /**
@@ -53,9 +51,9 @@ class PageLinkBuilder extends AbstractLinkBuilder
      * @see \TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder::buildTypolinkConfiguration
      *
      * @param  array $configuration
-     * @return array
+     * @return array{parameter: mixed, additionalParams?: string, addQueryString?: int, addQueryString.?: array{exclude: string, method?: mixed}, useCacheHash?: int, section?: mixed, linkAccessRestrictedPages?: int, forceAbsoluteUrl?: int}|array{parameter: mixed, additionalParams?: string, addQueryString?: int, addQueryString.?: array{exclude: string, method?: mixed}, no_cache: int, section?: mixed, linkAccessRestrictedPages?: int, forceAbsoluteUrl?: int}
      */
-    protected function convertFromPageViewHelperConfig($configuration)
+    protected function convertFromPageViewHelperConfig($configuration): array
     {
         $typolinkConfiguration = [];
 

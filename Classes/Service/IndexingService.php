@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace PAGEmachine\Searchable\Service;
@@ -9,7 +10,6 @@ use PAGEmachine\Searchable\Indexer\IndexerFactory;
 use PAGEmachine\Searchable\Indexer\IndexerInterface;
 use PAGEmachine\Searchable\IndexManager;
 use PAGEmachine\Searchable\PipelineManager;
-use PAGEmachine\Searchable\Service\ExtconfService;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\LanguageAspect;
@@ -18,16 +18,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
-final class IndexingService
+final class IndexingService implements \Stringable
 {
     /**
      * @var IndexerFactory $indexerFactory
      */
     protected $indexerFactory;
 
-    /**
-     * @param IndexerFactory $indexerFactory
-     */
     public function injectIndexerFactory(IndexerFactory $indexerFactory): void
     {
         $this->indexerFactory = $indexerFactory;
@@ -38,9 +35,6 @@ final class IndexingService
      */
     protected $persistenceManager;
 
-    /**
-     * @param PersistenceManagerInterface $persistenceManager
-     */
     public function injectPersistenceManager(PersistenceManagerInterface $persistenceManager): void
     {
         $this->persistenceManager = $persistenceManager;
@@ -51,32 +45,26 @@ final class IndexingService
      */
     protected $signalDispatcher;
 
-    /**
-     * @param Dispatcher $signalDispatcher
-     */
-    public function injectSignalDispatcher(Dispatcher $signalDispatcher)
+    public function injectSignalDispatcher(Dispatcher $signalDispatcher): void
     {
         $this->signalDispatcher = $signalDispatcher;
     }
 
     private EventDispatcherInterface $eventDispatcher;
 
-    public function injectEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    public function injectEventDispatcher(EventDispatcherInterface $eventDispatcher): void
     {
         $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
-    /**
-     * @param LogManager $logManager
-     */
     public function injectLogManager(LogManager $logManager): void
     {
-        $this->logger = $logManager->getLogger(__CLASS__);
+        $this->logger = $logManager->getLogger(self::class);
     }
 
     /**
@@ -122,13 +110,13 @@ final class IndexingService
             $this->logger->error(sprintf(
                 'Invalid indexers configuration: %s [%s]',
                 $e->getMessage(),
-                get_class($e)
+                $e::class
             ));
 
             return;
         }
 
-        if (empty($indexers)) {
+        if ($indexers === []) {
             $this->logger->warning('No indexers defined');
         } else {
             $this->logger->debug('Successfully validated indexers configuration');
@@ -136,15 +124,13 @@ final class IndexingService
 
         $indices = ExtconfService::getIndices();
 
-        if (!empty($indices)) {
-            foreach ($indices as $language => $index) {
-                $indexManager->createIndex($index);
+        foreach ($indices as $index) {
+            $indexManager->createIndex($index);
 
-                $this->logger->debug(sprintf(
-                    'Ensured index "%s" exists',
-                    $index
-                ));
-            }
+            $this->logger->debug(sprintf(
+                'Ensured index "%s" exists',
+                $index
+            ));
         }
 
         $pipelineManager = PipelineManager::getInstance();
@@ -155,13 +141,13 @@ final class IndexingService
     /**
      * Reset index for one or all languages
      *
-     * @param int $language
+     * @param int|null $language
      */
     public function resetIndex(int $language = null): void
     {
         $this->assertConnectionHealthy();
 
-        $indexers = $this->indexerFactory->makeIndexers();
+        $this->indexerFactory->makeIndexers();
         $indexManager = IndexManager::getInstance();
 
         if ($language !== null) {
@@ -222,7 +208,7 @@ final class IndexingService
     {
         $indices = ExtconfService::getIndices();
 
-        foreach ($indices as $language => $index) {
+        foreach (array_keys($indices) as $language) {
             if (empty($this->type)) {
                 foreach ($this->indexerFactory->makeIndexers($language) as $indexer) {
                     $this->scheduledIndexers[$language][] = $indexer;
@@ -246,7 +232,7 @@ final class IndexingService
         $this->logger->info(sprintf(
             'Starting "%s" indexing with %d indexers',
             $this->runFullIndexing ? 'full' : 'partial',
-            count($this->scheduledIndexers[0])
+            is_countable($this->scheduledIndexers[0]) ? count($this->scheduledIndexers[0]) : 0
         ));
 
         foreach ($this->scheduledIndexers as $language => $indexers) {
@@ -282,7 +268,7 @@ final class IndexingService
             'memoryUsage' => memory_get_peak_usage(true) / 1000000,
         ]);
 
-        $this->signalDispatcher->dispatch(__CLASS__, 'afterIndexRun', [
+        $this->signalDispatcher->dispatch(self::class, 'afterIndexRun', [
             $this->runFullIndexing,
             $elapsedTime,
         ]);
@@ -318,11 +304,7 @@ final class IndexingService
     protected function applyEnvironment(int $languageUid, array $environment): \Closure
     {
         // Set environment language if BE_USER lang is not set (happens on CLI calls)
-        if ($GLOBALS['BE_USER']->uc !== null) {
-            $originalUserLanguage = $GLOBALS['BE_USER']->uc['lang'];
-        } else {
-            $originalUserLanguage = $environment['language'];
-        }
+        $originalUserLanguage = $GLOBALS['BE_USER']->uc !== null ? $GLOBALS['BE_USER']->uc['lang'] : $environment['language'];
 
         $originalLocale = setlocale(LC_ALL, '0');
 
@@ -371,6 +353,6 @@ final class IndexingService
 
     public function __toString(): string
     {
-        return __CLASS__;
+        return self::class;
     }
 }

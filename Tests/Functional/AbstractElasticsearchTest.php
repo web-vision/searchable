@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace PAGEmachine\Searchable\Tests\Functional;
@@ -36,16 +37,13 @@ abstract class AbstractElasticsearchTest extends FunctionalTestCase
     /**
      * @var string[]
      */
-    private $indexNames;
+    private array $indexNames;
 
     /**
      * @var IndexingService
      */
     protected $indexingService;
 
-    /**
-     * @return void
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -182,9 +180,6 @@ abstract class AbstractElasticsearchTest extends FunctionalTestCase
         Bootstrap::initializeLanguageObject();
     }
 
-    /**
-     * @return void
-     */
     protected function tearDown(): void
     {
         $this->getElasticsearchClient()->indices()->delete([
@@ -204,29 +199,27 @@ abstract class AbstractElasticsearchTest extends FunctionalTestCase
         ]);
         $total = $response['hits']['total'];
 
-        $this->assertEquals(0, $total, 'Documents in index');
+        self::assertEquals(0, $total, 'Documents in index');
     }
 
     protected function assertDocumentInIndex(int $uid, array $documentSubset = [], int $languageId = 0): void
     {
         $document = $this->searchDocumentByUid($uid, $languageId);
 
-        $this->assertNotEmpty($document, 'Document not in index');
-        $this->assertArraySubset($documentSubset, $document, false, 'Document source mismatch');
+        self::assertNotEmpty($document, 'Document not in index');
+        self::assertArraySubset($documentSubset, $document, false, 'Document source mismatch');
     }
 
     protected function assertDocumentNotInIndex(int $uid, int $languageId = 0): void
     {
         $document = $this->searchDocumentByUid($uid, $languageId);
 
-        $this->assertEmpty($document, 'Document in index');
+        self::assertEmpty($document, 'Document in index');
     }
 
     protected function getElasticsearchClient(): ElasticsearchClient
     {
-        $client = Connection::getClient();
-
-        return $client;
+        return Connection::getClient();
     }
 
     protected function searchDocumentByUid(int $uid, int $languageId): array
@@ -247,9 +240,8 @@ abstract class AbstractElasticsearchTest extends FunctionalTestCase
             ],
         ]);
         $hits = $response['hits']['hits'];
-        $document = $hits[0]['_source'] ?? [];
 
-        return $document;
+        return $hits[0]['_source'] ?? [];
     }
 
     /**

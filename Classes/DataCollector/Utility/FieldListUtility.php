@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector\Utility;
 
 use TYPO3\CMS\Core\SingletonInterface;
@@ -10,8 +11,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FieldListUtility implements SingletonInterface
 {
-    const MODE_WHITELIST = 'whitelist';
-    const MODE_BLACKLIST = 'blacklist';
+    public const MODE_WHITELIST = 'whitelist';
+    public const MODE_BLACKLIST = 'blacklist';
 
     /**
      * @return FieldListUtility
@@ -36,8 +37,6 @@ class FieldListUtility implements SingletonInterface
         $whitelist = $this->getWhitelistSystemFields($tca);
 
         foreach ($tca['columns'] as $key => $column) {
-            $type = $column['config']['type'] ?? null;
-
             if ($this->shouldInclude($key, $configFields, $configMode)) {
                 $whitelist[] = $key;
             }
@@ -50,9 +49,8 @@ class FieldListUtility implements SingletonInterface
      * Returns the whitelisted system fields (always enabled)
      *
      * @param array $tca
-     * @return array
      */
-    protected function getWhitelistSystemFields($tca)
+    protected function getWhitelistSystemFields($tca): array
     {
         $systemFields = [
             'uid',
@@ -77,7 +75,7 @@ class FieldListUtility implements SingletonInterface
      */
     public function shouldInclude($fieldname, $fieldList, $mode)
     {
-        $returnValue = $mode == self::MODE_WHITELIST ? true : false;
+        $returnValue = $mode == self::MODE_WHITELIST;
 
         if (in_array($fieldname, $fieldList)) {
             return $returnValue;

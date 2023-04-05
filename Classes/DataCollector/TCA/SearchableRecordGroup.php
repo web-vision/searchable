@@ -1,7 +1,16 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector\TCA;
 
+use PAGEmachine\Searchable\DataCollector\TCA\DataProvider\TcaInlineCopyToDbRecord;
+use PAGEmachine\Searchable\DataCollector\TCA\DataProvider\TcaSelectRelations;
 use TYPO3\CMS\Backend\Form\FormDataGroupInterface;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsProcessRecordTitle;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsProcessShowitem;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInline;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaInputPlaceholders;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectTreeItems;
 use TYPO3\CMS\Backend\Form\FormDataProviderInterface;
 use TYPO3\CMS\Core\Service\DependencyOrderingService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -11,44 +20,38 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class SearchableRecordGroup implements FormDataGroupInterface
 {
-    protected $dataProviders = [];
+    protected array $dataProviders;
 
-    /**
-     * @return void
-     */
     public function __construct()
     {
         $dataProvider = $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'];
 
         //Replace TcaSelectItems DataProvider with a custom one that does not fetch all available items for relations
-        unset($dataProvider[\TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems::class]);
-        $dataProvider[\PAGEmachine\Searchable\DataCollector\TCA\DataProvider\TcaSelectRelations::class] = [
+        unset($dataProvider[TcaSelectItems::class]);
+        $dataProvider[TcaSelectRelations::class] = [
             'depends' => [],
             'before' => [
-                \TYPO3\CMS\Backend\Form\FormDataProvider\TcaInputPlaceholders::class,
-                \TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectTreeItems::class,
+                TcaInputPlaceholders::class,
+                TcaSelectTreeItems::class,
             ],
         ];
-
 
         //Unset DataProvider which determines the items to process. This information will be handed over in the compiler input array
-        unset($dataProvider[\TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsProcessShowitem::class]);
+        unset($dataProvider[TcaColumnsProcessShowitem::class]);
 
         //unset record title provider - no need
-        unset($dataProvider[\TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsProcessRecordTitle::class]);
+        unset($dataProvider[TcaColumnsProcessRecordTitle::class]);
 
         //Add custom inline provider to copy children to database record
-        $dataProvider[\PAGEmachine\Searchable\DataCollector\TCA\DataProvider\TcaInlineCopyToDbRecord::class] = [
+        $dataProvider[TcaInlineCopyToDbRecord::class] = [
             'depends' => [
-                \TYPO3\CMS\Backend\Form\FormDataProvider\TcaInline::class,
+                TcaInline::class,
             ],
         ];
-
 
         $orderingService = GeneralUtility::makeInstance(DependencyOrderingService::class);
         $this->dataProviders = $orderingService->orderByDependencies($dataProvider, 'before', 'depends');
     }
-
 
     /**
      * Compile form data
@@ -59,7 +62,7 @@ class SearchableRecordGroup implements FormDataGroupInterface
      */
     public function compile(array $result)
     {
-        foreach ($this->dataProviders as $providerClassName => $_) {
+        foreach (array_keys($this->dataProviders) as $providerClassName) {
             /** @var FormDataProviderInterface $provider */
             $provider = GeneralUtility::makeInstance($providerClassName);
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector\Utility;
 
 use PAGEmachine\Searchable\DataCollector\TCA\FormDataRecord;
@@ -13,10 +14,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class OverlayUtility implements SingletonInterface
 {
-    /**
-     * @var PageRepository
-     */
-    protected $pageRepository;
+    protected PageRepository $pageRepository;
 
     /**
      * @return OverlayUtility
@@ -27,7 +25,6 @@ class OverlayUtility implements SingletonInterface
     }
 
     /**
-     *
      * @param PageRepository|null $pageRepository
      */
     public function __construct(PageRepository $pageRepository = null)
@@ -78,8 +75,8 @@ class OverlayUtility implements SingletonInterface
         $translationData = FormDataRecord::getInstance()->getRecord($rawOverlay['_LOCALIZED_UID'], $table, $fieldWhitelist);
         $translationRecord = $translationData['databaseRow'];
 
-        foreach ($record as $key => $field) {
-            if ($key == "uid" || $key == "pid") {
+        foreach (array_keys($record) as $key) {
+            if ($key == 'uid' || $key == 'pid') {
                 continue;
             }
 

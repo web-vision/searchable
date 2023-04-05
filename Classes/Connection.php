@@ -1,6 +1,8 @@
 <?php
+
 namespace PAGEmachine\Searchable;
 
+use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use PAGEmachine\Searchable\Service\ExtconfService;
 
@@ -16,15 +18,14 @@ class Connection
     /**
      * The cached ES client
      *
-     * @var \Elasticsearch\Client
+     * @var Client
      */
-    protected static $client = null;
-
+    protected static $client;
 
     /**
      * Returns the (configured) ES Client
      *
-     * @return \Elasticsearch\Client
+     * @return Client
      */
     public static function getClient()
     {
@@ -38,13 +39,9 @@ class Connection
 
     /**
      * Tries to (re-)build the client to check if nodes are available
-     *
-     * @return bool
      */
-    public static function isHealthy()
+    public static function isHealthy(): bool
     {
-        $ping = self::getClient()->ping();
-
-        return $ping;
+        return self::getClient()->ping();
     }
 }

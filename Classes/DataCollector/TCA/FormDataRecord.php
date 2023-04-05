@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector\TCA;
 
 use TYPO3\CMS\Backend\Form\Exception\DatabaseDefaultLanguageException;
@@ -18,19 +19,12 @@ class FormDataRecord implements SingletonInterface
 {
     /**
      * SearchableRecordGroup group (backend/form)
-     *
-     * @var SearchableRecordGroup
      */
-    protected $formDataGroup;
+    protected SearchableRecordGroup $formDataGroup;
+
+    protected FormDataCompiler $formDataCompiler;
 
     /**
-     *
-     * @var FormDataCompiler
-     */
-    protected $formDataCompiler;
-
-    /**
-     *
      * @param SearchableRecordGroup|null $formDataGroup
      * @param FormDataCompiler|null $formDataCompiler
      */
@@ -41,7 +35,6 @@ class FormDataRecord implements SingletonInterface
     }
 
     /**
-     *
      * @return FormDataRecord
      */
     public static function getInstance()
@@ -71,10 +64,10 @@ class FormDataRecord implements SingletonInterface
              * @throws DatabaseDefaultLanguageException
              */
             $data = $this->formDataCompiler->compile($formDataCompilerInput);
-        //Be nice and catch all errors related to inconsistent data (sometimes strange things happen with extbase relations)
+            //Be nice and catch all errors related to inconsistent data (sometimes strange things happen with extbase relations)
         } catch (DatabaseRecordException $e) {
             $data = [];
-        // Catch errors if translation parent is not found
+            // Catch errors if translation parent is not found
         } catch (DatabaseDefaultLanguageException $e) {
             $data = [];
         }

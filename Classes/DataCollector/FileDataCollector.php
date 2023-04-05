@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector;
 
 use Doctrine\DBAL\Connection;
@@ -27,7 +28,7 @@ class FileDataCollector extends TcaDataCollector implements DataCollectorInterfa
         ],
         'subCollectors' => [
             'file' => [
-                'className' => \PAGEmachine\Searchable\DataCollector\TcaDataCollector::class,
+                'className' => TcaDataCollector::class,
                 'config' => [
                     'field' => 'file',
                     'fields' => [],
@@ -45,7 +46,7 @@ class FileDataCollector extends TcaDataCollector implements DataCollectorInterfa
      * Modify this method if you want to apply custom restrictions
      *
      * @param  bool $applyLanguageRestriction
-     * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder $subCollector
+     * @return QueryBuilder $subCollector
      */
     public function buildUidListQueryBuilder($applyLanguageRestriction = false)
     {

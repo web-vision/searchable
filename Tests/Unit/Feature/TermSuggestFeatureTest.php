@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\Feature;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -33,7 +34,7 @@ class TermSuggestFeatureTest extends UnitTestCase
     /**
      * @test
      */
-    public function addsSuggestionQueryString()
+    public function addsSuggestionQueryString(): void
     {
         $query = $this->prophesize(QueryInterface::class);
         $query->getParameters()->willReturn([

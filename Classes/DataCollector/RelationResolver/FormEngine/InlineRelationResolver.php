@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector\RelationResolver\FormEngine;
 
 use PAGEmachine\Searchable\DataCollector\DataCollectorInterface;
@@ -10,13 +11,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * This file is part of the PAGEmachine Searchable project.
  */
 
-/**
- *
- */
 class InlineRelationResolver implements SingletonInterface, RelationResolverInterface
 {
     /**
-     *
      * @return SelectRelationResolver
      */
     public static function getInstance()
@@ -29,11 +26,9 @@ class InlineRelationResolver implements SingletonInterface, RelationResolverInte
      *
      * @param  string $fieldname
      * @param  array $record The record containing the field to resolve
-     * @param  DataCollectorInterface $childCollector
-     * @param  DataCollectorInterface $parentCollector
-     * @return array $processedField
+     * @return array<int, mixed[]> $processedField
      */
-    public function resolveRelation($fieldname, $record, DataCollectorInterface $childCollector, DataCollectorInterface $parentCollector)
+    public function resolveRelation($fieldname, $record, DataCollectorInterface $childCollector, DataCollectorInterface $parentCollector): array
     {
         $records = [];
 

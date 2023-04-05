@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector\TCA;
 
 use PAGEmachine\Searchable\Utility\BinaryConversionUtility;
@@ -15,7 +16,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class PlainValueProcessor implements SingletonInterface
 {
     /**
-     *
      * @return PlainValueProcessor
      */
     public static function getInstance()
@@ -23,32 +23,30 @@ class PlainValueProcessor implements SingletonInterface
         return GeneralUtility::makeInstance(self::class);
     }
 
-
     /**
      * Resolves the bitmask and puts in labels for checkboxes
      *
      * @param  int $value
      * @param  array $fieldTca
-     * @return string
      */
-    public function processCheckboxField($value, $fieldTca)
+    public function processCheckboxField($value, $fieldTca): string
     {
         $items = [];
 
-        $itemCount = count($fieldTca['items']);
+        $itemCount = is_countable($fieldTca['items']) ? count($fieldTca['items']) : 0;
         $activeItemKeys = BinaryConversionUtility::convertCheckboxValue($value, $itemCount);
 
         foreach ($activeItemKeys as $key) {
             $label = $fieldTca['items'][$key][0];
 
-            if (str_starts_with($label, 'LLL:')) {
+            if (str_starts_with((string)$label, 'LLL:')) {
                 $label = $this->getLanguageService()->sL($label);
             }
 
             $items[] = $label;
         }
 
-        return implode(", ", $items);
+        return implode(', ', $items);
     }
 
     /**
@@ -60,7 +58,7 @@ class PlainValueProcessor implements SingletonInterface
      */
     public function processRadioField($value, $fieldTca)
     {
-        $label = "";
+        $label = '';
 
         if (is_array($fieldTca['items'])) {
             foreach ($fieldTca['items'] as $set) {
@@ -71,7 +69,7 @@ class PlainValueProcessor implements SingletonInterface
             }
         }
 
-        if (str_starts_with($label, 'LLL:')) {
+        if (str_starts_with((string)$label, 'LLL:')) {
             $label = $this->getLanguageService()->sL($label);
         }
 

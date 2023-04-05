@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Feature;
 
 use PAGEmachine\Searchable\Configuration\DynamicConfigurationInterface;
@@ -49,7 +50,7 @@ abstract class AbstractFeature implements DynamicConfigurationInterface
     /**
      * @var string
      */
-    public static $featureName = "";
+    public static $featureName = '';
 
     /**
      * Returns the feature name (used in TypoScript to enable/disable the feature in FE)
@@ -88,7 +89,6 @@ abstract class AbstractFeature implements DynamicConfigurationInterface
     /**
      * Modifies a query before it is executed
      *
-     * @param QueryInterface $query
      * @return QueryInterface
      */
     public function modifyQuery(QueryInterface $query)

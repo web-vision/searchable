@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector;
 
 use PAGEmachine\Searchable\Configuration\DynamicConfigurationInterface;
@@ -33,11 +34,8 @@ abstract class AbstractDataCollector implements DynamicConfigurationInterface
 
     /**
      * ObjectManager
-     *
-     * @var ObjectManager
      */
-    protected $objectManager;
-
+    protected ObjectManager $objectManager;
 
     /**
      * @var array $config
@@ -45,14 +43,12 @@ abstract class AbstractDataCollector implements DynamicConfigurationInterface
     protected $config = [];
 
     /**
-     *
      * @param array $config
      */
-    public function setConfig($config = [])
+    public function setConfig($config = []): void
     {
         $this->config = $config;
     }
-
 
     /**
      * @return array
@@ -61,7 +57,6 @@ abstract class AbstractDataCollector implements DynamicConfigurationInterface
     {
         return $this->config;
     }
-
 
     /**
      * @var int $language
@@ -78,9 +73,8 @@ abstract class AbstractDataCollector implements DynamicConfigurationInterface
 
     /**
      * @param int $language
-     * @return void
      */
-    public function setLanguage($language)
+    public function setLanguage($language): void
     {
         $this->language = $language;
     }
@@ -107,9 +101,8 @@ abstract class AbstractDataCollector implements DynamicConfigurationInterface
      * Adds a new SubCollector for subtypes
      *
      * @param string                 $field        Fieldname to apply this collector to
-     * @param DataCollectorInterface $collector
      */
-    public function addSubCollector($field, DataCollectorInterface $collector)
+    public function addSubCollector($field, DataCollectorInterface $collector): void
     {
         $this->subCollectors[$field] = $collector;
     }
@@ -137,17 +130,13 @@ abstract class AbstractDataCollector implements DynamicConfigurationInterface
      */
     public function subCollectorExists($field)
     {
-        if (!empty($this->subCollectors[$field]) && $this->subCollectors[$field] instanceof DataCollectorInterface) {
-            return true;
-        }
-        return false;
+        return !empty($this->subCollectors[$field]) && $this->subCollectors[$field] instanceof DataCollectorInterface;
     }
 
     /**
-     *
      * @param array $configuration
      * @param int $language
-     * @param ObjectManager $objectManager
+     * @param ObjectManager|null $objectManager
      */
     public function __construct($configuration = [], $language = 0, ObjectManager $objectManager = null)
     {
@@ -164,26 +153,21 @@ abstract class AbstractDataCollector implements DynamicConfigurationInterface
         }
     }
 
-    /**
-     * @return void
-     */
-    public function initializeObject()
+    public function initializeObject(): void
     {
         $this->buildSubCollectors();
     }
 
     /**
      * Builds up subcollectors. Note that this function will be called in the subcollectors as well, so all collectors build a tree structure.
-     *
-     * @return void
      */
-    public function buildSubCollectors()
+    public function buildSubCollectors(): void
     {
         $this->subCollectors = [];
 
         if (!empty($this->config['subCollectors'])) {
             foreach ($this->config['subCollectors'] as $key => $subtypeConfig) {
-                $subtypeCollectorClass = $subtypeConfig['className'] ?: get_class($this);
+                $subtypeCollectorClass = $subtypeConfig['className'] ?: static::class;
 
                 $subCollector = $this->buildSubCollector($subtypeCollectorClass, $subtypeConfig['config']);
 
@@ -196,15 +180,12 @@ abstract class AbstractDataCollector implements DynamicConfigurationInterface
      * Builds a new subcollector
      * Override this method to do custom stuff to the new collector
      *
-     * @param string $classname
      * @param  array  $collectorConfig
      * @return DataCollectorInterface
      */
-    public function buildSubCollector($classname, $collectorConfig = [])
+    public function buildSubCollector(string $classname, $collectorConfig = [])
     {
-        $subCollector = $this->objectManager->get($classname, $collectorConfig, $this->language);
-
-        return $subCollector;
+        return $this->objectManager->get($classname, $collectorConfig, $this->language);
     }
 
     /**

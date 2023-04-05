@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\DataCollector;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -79,7 +80,7 @@ class PagesDataCollectorTest extends UnitTestCase
         ->getMock();
 
         $this->pageRepository = $this->prophesize(PageRepository::class);
-        $this->inject($this->pagesDataCollector, "pageRepository", $this->pageRepository->reveal());
+        $this->inject($this->pagesDataCollector, 'pageRepository', $this->pageRepository->reveal());
 
         $this->formDataRecord = $this->prophesize(FormDataRecord::class);
         GeneralUtility::setSingletonInstance(FormDataRecord::class, $this->formDataRecord->reveal());
@@ -88,7 +89,7 @@ class PagesDataCollectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function collectsPageListSingleLevel()
+    public function collectsPageListSingleLevel(): void
     {
         $pageList = [
             0 => [
@@ -111,24 +112,24 @@ class PagesDataCollectorTest extends UnitTestCase
 
         ];
 
-        $this->pagesDataCollector->method("getRecord")
-            ->will($this->returnValueMap($valueMap));
+        $this->pagesDataCollector->method('getRecord')
+            ->willReturnMap($valueMap);
 
-        $this->pageRepository->getMenu(0, Argument::type("string"), 'sorting', Argument::type("string"))->willReturn(['3' => ['doktype' => '1'], '4' => ['doktype' => '1']]);
-        $this->pageRepository->getMenu(3, Argument::type("string"), 'sorting', Argument::type("string"))->willReturn([]);
-        $this->pageRepository->getMenu(4, Argument::type("string"), 'sorting', Argument::type("string"))->willReturn([]);
+        $this->pageRepository->getMenu(0, Argument::type('string'), 'sorting', Argument::type('string'))->willReturn(['3' => ['doktype' => '1'], '4' => ['doktype' => '1']]);
+        $this->pageRepository->getMenu(3, Argument::type('string'), 'sorting', Argument::type('string'))->willReturn([]);
+        $this->pageRepository->getMenu(4, Argument::type('string'), 'sorting', Argument::type('string'))->willReturn([]);
 
         $records = $this->pagesDataCollector->getRecords();
 
-        $this->assertEquals($pageList[0], $records->current());
+        self::assertEquals($pageList[0], $records->current());
         $records->next();
-        $this->assertEquals($pageList[1], $records->current());
+        self::assertEquals($pageList[1], $records->current());
     }
 
     /**
      * @test
      */
-    public function collectsPageListRecursive()
+    public function collectsPageListRecursive(): void
     {
         $pageList = [
             0 => [
@@ -149,17 +150,17 @@ class PagesDataCollectorTest extends UnitTestCase
 
         ];
 
-        $this->pagesDataCollector->method("getRecord")
-            ->will($this->returnValueMap($valueMap));
+        $this->pagesDataCollector->method('getRecord')
+            ->willReturnMap($valueMap);
 
-        $this->pageRepository->getMenu(0, Argument::type("string"), 'sorting', Argument::type("string"))->willReturn(['3' => ['doktype' => '1']]);
-        $this->pageRepository->getMenu(3, Argument::type("string"), 'sorting', Argument::type("string"))->willReturn(['4' => ['doktype' => '1']]);
-        $this->pageRepository->getMenu(4, Argument::type("string"), 'sorting', Argument::type("string"))->willReturn([]);
+        $this->pageRepository->getMenu(0, Argument::type('string'), 'sorting', Argument::type('string'))->willReturn(['3' => ['doktype' => '1']]);
+        $this->pageRepository->getMenu(3, Argument::type('string'), 'sorting', Argument::type('string'))->willReturn(['4' => ['doktype' => '1']]);
+        $this->pageRepository->getMenu(4, Argument::type('string'), 'sorting', Argument::type('string'))->willReturn([]);
 
         $records = $this->pagesDataCollector->getRecords();
 
-        $this->assertEquals($pageList[0], $records->current());
+        self::assertEquals($pageList[0], $records->current());
         $records->next();
-        $this->assertEquals($pageList[1], $records->current());
+        self::assertEquals($pageList[1], $records->current());
     }
 }

@@ -1,9 +1,9 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector\RelationResolver;
 
 use PAGEmachine\Searchable\DataCollector\AbstractDataCollector;
 use PAGEmachine\Searchable\DataCollector\DataCollectorInterface;
-use PAGEmachine\Searchable\DataCollector\RelationResolver\RelationResolverInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -13,19 +13,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * This file is part of the PAGEmachine Searchable project.
  */
 
-/**
- *
- */
 class TtContentRelationResolver implements SingletonInterface, RelationResolverInterface
 {
-    /**
-     *
-     * @var \TYPO3\CMS\Core\Domain\Repository\PageRepository
-     */
-    protected $pageRepository;
+    protected PageRepository $pageRepository;
 
     /**
-     *
      * @return TtContentRelationResolver
      */
     public static function getInstance()
@@ -46,11 +38,9 @@ class TtContentRelationResolver implements SingletonInterface, RelationResolverI
      *
      * @param  string $fieldname
      * @param  array $record The record containing the field to resolve
-     * @param  DataCollectorInterface $childCollector
-     * @param  DataCollectorInterface $parentCollector
-     * @return array $processedField
+     * @return array<int, mixed[]> $processedField
      */
-    public function resolveRelation($fieldname, $record, DataCollectorInterface $childCollector, DataCollectorInterface $parentCollector)
+    public function resolveRelation($fieldname, $record, DataCollectorInterface $childCollector, DataCollectorInterface $parentCollector): array
     {
         $processedField = [];
         $language = null;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace PAGEmachine\Searchable\LinkBuilder\Frontend;
@@ -9,10 +10,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class FrontendRequest implements FrontendRequestInterface
 {
-    /**
-     * @var RequestFactory
-     */
-    private $requestFactory;
+    private RequestFactory $requestFactory;
 
     public function __construct()
     {
@@ -32,7 +30,7 @@ final class FrontendRequest implements FrontendRequestInterface
             ]
         );
         // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump((string)$response->getBody(), __METHOD__, 8, defined('TYPO3_cliMode') || defined('TYPO3_REQUESTTYPE') && (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_CLI));
-        $uris = json_decode((string)$response->getBody(), true);
+        $uris = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         return $uris;
     }

@@ -1,7 +1,9 @@
 <?php
+
 namespace PAGEmachine\Searchable\Hook;
 
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -33,7 +35,7 @@ class DynamicFlexFormHook
     public function parseDataStructureByIdentifierPostProcess($dataStructure, $identifier)
     {
         if ($identifier['tableName'] == 'tt_content' && $identifier['fieldName'] == 'pi_flexform' && in_array($identifier['dataStructureKey'], $this->allowedIdentifiers)) {
-            list($pluginKey, $listType) = explode(",", $identifier['dataStructureKey']);
+            [$pluginKey, $listType] = explode(',', (string)$identifier['dataStructureKey']);
             $dataStructure['sheets']['features'] = $this->buildFlexSettingsFromTSSettings($pluginKey);
         }
         return $dataStructure;
@@ -43,9 +45,9 @@ class DynamicFlexFormHook
      * Builds FlexForm settings from TS (basically creates a field for each element in $settings['features'])
      *
      * @param string $plugin
-     * @return array
+     * @return array{ROOT: array{TCEforms: array{sheetTitle: string}, el: array<string, mixed[]>&mixed[]}}|array{ROOT: array{TCEforms: array{sheetTitle: string}, el: never[]}}
      */
-    protected function buildFlexSettingsFromTSSettings($plugin)
+    protected function buildFlexSettingsFromTSSettings($plugin): array
     {
         $configuration = $this->getPluginSettings($plugin);
 
@@ -57,8 +59,6 @@ class DynamicFlexFormHook
                 'el' => [],
             ],
         ];
-
-
 
         if (!empty($configuration['settings']['features'])) {
             foreach ($configuration['settings']['features'] as $feature => $value) {
@@ -73,11 +73,11 @@ class DynamicFlexFormHook
      *
      * @param  string $fieldname
      * @param  string $value The default value to apply
-     * @return array
+     * @return array{TCEforms: array{label: string, config: array{type: string, default: string}}}
      */
-    protected function buildSingleField($fieldname, $value)
+    protected function buildSingleField($fieldname, $value): array
     {
-        $field = [
+        return [
             'TCEforms' => [
                 'label' => 'LLL:EXT:searchable/Resources/Private/Language/locallang_flexforms.xlf:flexform.features.' . $fieldname,
                 'config' => [
@@ -86,8 +86,6 @@ class DynamicFlexFormHook
                 ],
             ],
         ];
-
-        return $field;
     }
 
     /**
@@ -115,7 +113,7 @@ class DynamicFlexFormHook
             $pluginSignature = strtolower('tx_' . $pluginName);
             if (is_array($setup['plugin.'][$pluginSignature . '.'])) {
                 $overruleConfiguration = $typoScriptService->convertTypoScriptArrayToPlainArray($setup['plugin.'][$pluginSignature . '.']);
-                \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($pluginConfiguration, $overruleConfiguration);
+                ArrayUtility::mergeRecursiveWithOverrule($pluginConfiguration, $overruleConfiguration);
             }
         }
         return $pluginConfiguration;

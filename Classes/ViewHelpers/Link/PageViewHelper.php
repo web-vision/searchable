@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\ViewHelpers\Link;
 
 /*
@@ -23,23 +24,21 @@ class PageViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * Arguments initialization
-     *
-     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('target', 'string', 'Target of link', false);
         $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document', false);
+        $this->registerArgument('arguments', 'array', '', false, []);
     }
 
     /**
-     *
-     * @param  array  $arguments
      * @return string
      */
-    public function render($arguments = [])
+    public function render()
     {
+        $arguments = $this->arguments['arguments'];
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $uriBuilder = $objectManager->get(UriBuilder::class);
         $uri = $uriBuilder->reset()

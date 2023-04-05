@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Indexer;
 
 use PAGEmachine\Searchable\Configuration\DynamicConfigurationInterface;
@@ -40,26 +41,20 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
 
     /**
      * ObjectManager
-     *
-     * @var ObjectManager
      */
-    protected $objectManager;
-
+    protected ObjectManager $objectManager;
 
     /**
-     * @var String $index
+     * @var string $index
      */
     protected $index;
 
-    /**
-     * @var BulkQuery
-     */
-    protected $query;
+    protected BulkQuery $query;
 
     /**
-     * @var \PAGEmachine\Searchable\DataCollector\DataCollectorInterface
+     * @var DataCollectorInterface
      */
-    protected $dataCollector;
+    protected object $dataCollector;
 
     /**
      * @var PreviewRendererInterface
@@ -77,7 +72,7 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
     protected $features = [];
 
     /**
-     * @return String
+     * @return string
      */
     public function getIndex()
     {
@@ -85,22 +80,20 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
     }
 
     /**
-     * @param String $index
-     * @return void
+     * @param string $index
      */
-    public function setIndex($index)
+    public function setIndex($index): void
     {
         $this->index = $index;
     }
 
-
     /**
-     * @var String $type
+     * @var string $type
      */
     protected $type;
 
     /**
-     * @return String
+     * @return string
      */
     public function getType()
     {
@@ -108,14 +101,12 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
     }
 
     /**
-     * @param String $type
-     * @return void
+     * @param string $type
      */
-    public function setType($type)
+    public function setType($type): void
     {
         $this->type = $type;
     }
-
 
     /**
      * @var int $language
@@ -132,13 +123,11 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
 
     /**
      * @param int $language
-     * @return void
      */
-    public function setLanguage($language)
+    public function setLanguage($language): void
     {
         $this->language = $language;
     }
-
 
     /**
      * @var array $config
@@ -155,9 +144,8 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
 
     /**
      * @param array $config
-     * @return void
      */
-    public function setConfig($config)
+    public function setConfig($config): void
     {
         $this->config = $config;
     }
@@ -180,7 +168,7 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
 
         $this->type = $this->config['type'] ?? null;
 
-        $this->objectManager = $objectManager?: GeneralUtility::makeInstance(ObjectManager::class);
+        $this->objectManager = $objectManager ?: GeneralUtility::makeInstance(ObjectManager::class);
 
         $this->dataCollector = $this->objectManager->get($this->config['collector']['className'], $this->config['collector']['config'], $this->language);
 
@@ -202,15 +190,13 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
      */
     protected function setPreviewRenderer(PreviewRendererInterface $previewRenderer = null)
     {
-        if ($previewRenderer) {
+        if ($previewRenderer !== null) {
             $this->previewRenderer = $previewRenderer;
-        } else {
-            if (isset($this->config['preview'])) {
-                if (!empty($this->config['preview']['className'])) {
-                    $this->previewRenderer = $this->objectManager->get($this->config['preview']['className'], $this->config['preview']['config']);
-                } else {
-                    $this->previewRenderer = $this->objectManager->get(DefaultPreviewRenderer::class, $this->config['preview']['config']);
-                }
+        } elseif (isset($this->config['preview'])) {
+            if (!empty($this->config['preview']['className'])) {
+                $this->previewRenderer = $this->objectManager->get($this->config['preview']['className'], $this->config['preview']['config']);
+            } else {
+                $this->previewRenderer = $this->objectManager->get(DefaultPreviewRenderer::class, $this->config['preview']['config']);
             }
         }
     }
@@ -222,15 +208,13 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
      */
     protected function setLinkBuilder(LinkBuilderInterface $linkBuilder = null)
     {
-        if ($linkBuilder) {
+        if ($linkBuilder !== null) {
             $this->linkBuilder = $linkBuilder;
-        } else {
-            if (isset($this->config['link'])) {
-                if (!empty($this->config['link']['className'])) {
-                    $this->linkBuilder = $this->objectManager->get($this->config['link']['className'], $this->config['link']['config']);
-                } else {
-                    $this->linkBuilder = $this->objectManager->get(PageLinkBuilder::class, $this->config['link']['config']);
-                }
+        } elseif (isset($this->config['link'])) {
+            if (!empty($this->config['link']['className'])) {
+                $this->linkBuilder = $this->objectManager->get($this->config['link']['className'], $this->config['link']['config']);
+            } else {
+                $this->linkBuilder = $this->objectManager->get(PageLinkBuilder::class, $this->config['link']['config']);
             }
         }
     }
@@ -326,7 +310,7 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
 
         $records = [];
 
-        if (!empty($updates)) {
+        if ($updates !== []) {
             foreach ($this->dataCollector->getUpdatedRecords($updates) as $fullRecord) {
                 if ($fullRecord['deleted'] == 1) {
                     $this->query->delete($fullRecord['uid']);
@@ -358,7 +342,6 @@ class Indexer implements IndexerInterface, DynamicConfigurationInterface
      * Sends a batch
      *
      * @param  array $records
-     * @return void
      */
     protected function sendBatch($records)
     {

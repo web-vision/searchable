@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Preview;
 
 /*
@@ -15,9 +16,8 @@ class NoPreviewRenderer extends AbstractPreviewRenderer implements PreviewRender
      * Renders the preview
      *
      * @param  array $record
-     * @return string
      */
-    public function render($record)
+    public function render($record): string
     {
         return '';
     }

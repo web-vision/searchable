@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace PAGEmachine\Searchable\Command\Index;
@@ -11,12 +12,9 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 abstract class AbstractIndexCommand extends Command
 {
-    /**
-     * @var IndexingService
-     */
-    protected $indexingService;
+    protected IndexingService $indexingService;
 
-    public function __construct(...$arguments)
+    public function __construct(string ...$arguments)
     {
         parent::__construct(...$arguments);
 

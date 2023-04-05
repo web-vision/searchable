@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\Feature;
 
 /*
@@ -38,7 +39,7 @@ class HtmlStripFeatureTest extends UnitTestCase
     /**
      * @test
      */
-    public function stripsHtmlTags()
+    public function stripsHtmlTags(): void
     {
         $record = [
             'title' => 'Test title',
@@ -56,6 +57,6 @@ class HtmlStripFeatureTest extends UnitTestCase
         ];
         $result = $this->htmlStripFeature->modifyRecord($record);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 }

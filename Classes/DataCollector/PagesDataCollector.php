@@ -1,7 +1,11 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector;
 
+use PAGEmachine\Searchable\DataCollector\RelationResolver\TtContentRelationResolver;
 use PAGEmachine\Searchable\DataCollector\Utility\OverlayUtility;
+use PAGEmachine\Searchable\Feature\CompletionSuggestFeature;
+use PAGEmachine\Searchable\Feature\HtmlStripFeature;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 
@@ -28,7 +32,7 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
         ],
         'features' => [
             'completion' => [
-                'className' => \PAGEmachine\Searchable\Feature\CompletionSuggestFeature::class,
+                'className' => CompletionSuggestFeature::class,
                 'config' => [
                     'fields' => [
                         'title',
@@ -36,17 +40,17 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
                 ],
             ],
             'htmlStrip' => [
-                'className' => \PAGEmachine\Searchable\Feature\HtmlStripFeature::class,
+                'className' => HtmlStripFeature::class,
             ],
         ],
         'subCollectors' => [
             'content' => [
-                'className' => \PAGEmachine\Searchable\DataCollector\TcaDataCollector::class,
+                'className' => TcaDataCollector::class,
                 'config' => [
                     'field' => 'content',
                     'table' => 'tt_content',
                     'resolver' => [
-                        'className' => \PAGEmachine\Searchable\DataCollector\RelationResolver\TtContentRelationResolver::class,
+                        'className' => TtContentRelationResolver::class,
                     ],
                     'fields' => [
                         'header',
@@ -64,7 +68,7 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
      *
      * @var string|null
      */
-    protected $doktypes = null;
+    protected $doktypes;
 
     /**
      * Returns the doktypes needed for db fetching
@@ -75,7 +79,7 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
     {
         if ($this->doktypes == null) {
             $this->doktypes = implode(
-                ",",
+                ',',
                 array_merge($this->config['doktypes'], $this->config['transientDoktypes'])
             );
         }
@@ -84,8 +88,6 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
     }
 
     /**
-     *
-     *
      * @return \Generator
      */
     public function getRecords()
@@ -96,8 +98,6 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
     }
 
     /**
-     *
-     *
      * @return \Generator|null
      */
     protected function getPageRecords($pid = null)
@@ -107,7 +107,7 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
             ' AND pages.doktype IN(' . $this->getDoktypes() . ')' .
             $this->config['groupWhereClause'] .
             ($this->config['includeHideInMenu'] ? '' : ' AND pages.nav_hide = 0')
-            ;
+        ;
 
         $rawList = $this->pageRepository->getMenu(
             $pid,
@@ -122,21 +122,19 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
             $whereClause
         );
 
-        if (!empty($rawList)) {
-            foreach ($rawList as $uid => $page) {
-                // Check if page is directly indexable or only transient,
-                // also skip page if search has been disabled
-                if (in_array($page['doktype'], $this->config['doktypes']) && !($page['no_search'] ?? false)) {
-                    yield $this->getRecord($uid);
-                }
+        foreach ($rawList as $uid => $page) {
+            // Check if page is directly indexable or only transient,
+            // also skip page if search has been disabled
+            if (in_array($page['doktype'], $this->config['doktypes']) && !($page['no_search'] ?? false)) {
+                yield $this->getRecord($uid);
+            }
 
-                //@todo: use "yield from" as soon as PHP7 is a requirement
-                $subpages = $this->getPageRecords($uid);
+            //@todo: use "yield from" as soon as PHP7 is a requirement
+            $subpages = $this->getPageRecords($uid);
 
-                if (!empty($subpages)) {
-                    foreach ($subpages as $page) {
-                        yield $page;
-                    }
+            if ($subpages instanceof \Generator) {
+                foreach ($subpages as $page) {
+                    yield $page;
                 }
             }
         }
@@ -154,7 +152,7 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
         $updateUidList = $this->filterPageListByRootline($updateUidList, $this->config['pid']);
 
         $this->config['pid'] = null;
-        $this->config['select']['additionalWhereClauses']['doktypes'] = ' AND pages.doktype IN(' . implode(",", $this->config['doktypes']) . ')';
+        $this->config['select']['additionalWhereClauses']['doktypes'] = ' AND pages.doktype IN(' . implode(',', $this->config['doktypes']) . ')';
 
         foreach (parent::getUpdatedRecords($updateUidList) as $record) {
             yield $record;
@@ -174,10 +172,6 @@ class PagesDataCollector extends TcaDataCollector implements DataCollectorInterf
 
     /**
      * Returns a list of page UIDs that are part of the given rootline page
-     *
-     * @param array $pageUids
-     * @param int $rootlinePageUid
-     * @return array
      */
     protected function filterPageListByRootline(array $pageUids, int $rootlinePageUid): array
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Eid;
 
 use PAGEmachine\Searchable\Query\AutosuggestQuery;
@@ -17,9 +18,9 @@ class Autosuggest extends AbstractEidHandler
      * Returns results for given term
      *
      * @param  string $term
-     * @return array $suggestions
+     * @return array{suggestions: mixed[]} $suggestions
      */
-    protected function getResults($term)
+    protected function getResults($term): array
     {
         $query = GeneralUtility::makeInstance(AutosuggestQuery::class);
 

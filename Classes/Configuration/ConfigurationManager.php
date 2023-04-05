@@ -1,7 +1,7 @@
 <?php
+
 namespace PAGEmachine\Searchable\Configuration;
 
-use PAGEmachine\Searchable\Configuration\DynamicConfigurationInterface;
 use PAGEmachine\Searchable\Feature\FeatureInterface;
 use PAGEmachine\Searchable\Mapper\MapperInterface;
 use PAGEmachine\Searchable\Service\ConfigurationMergerService;
@@ -31,21 +31,21 @@ class ConfigurationManager implements SingletonInterface
      *
      * @var array
      */
-    protected $processedConfiguration = null;
+    protected $processedConfiguration;
 
     /**
      * Holds the processed mapping for each index
      *
      * @var array
      */
-    protected $processedMapping = null;
+    protected $processedMapping;
 
     /**
      * Holds the processed query configuration
      *
      * @var array
      */
-    protected $processedQueryConfiguration = null;
+    protected $processedQueryConfiguration;
 
     /**
      * UpdateConfiguration
@@ -57,7 +57,6 @@ class ConfigurationManager implements SingletonInterface
             'sublevel' => [],
         ],
     ];
-
 
     /**
      * Builds and returns the processed configuration
@@ -138,7 +137,6 @@ class ConfigurationManager implements SingletonInterface
     }
 
     /**
-     *
      * @param  array $indexerConfiguration
      * @return array
      */
@@ -188,18 +186,15 @@ class ConfigurationManager implements SingletonInterface
      */
     protected function addClassDefaultConfiguration($configuration, $parentConfiguration)
     {
-        if (is_string($configuration['className'] ?? null) && !empty($configuration['className'])) {
-            // Class will only be called if it implements a specific interface.
-            // @todo should this throw an exception or is it legit to have classes without dynamic configuration?
-            if (in_array(DynamicConfigurationInterface::class, class_implements($configuration['className']))) {
-                $defaultConfiguration = $configuration['className']::getDefaultConfiguration(
-                    $configuration['config'] ?? [],
-                    $parentConfiguration['config'] ?? []
-                );
-
-                if (is_array($defaultConfiguration)) {
-                    $configuration['config'] = ConfigurationMergerService::merge($defaultConfiguration, $configuration['config'] ?? []);
-                }
+        // Class will only be called if it implements a specific interface.
+        // @todo should this throw an exception or is it legit to have classes without dynamic configuration?
+        if (is_string($configuration['className'] ?? null) && !empty($configuration['className']) && in_array(DynamicConfigurationInterface::class, class_implements($configuration['className']))) {
+            $defaultConfiguration = $configuration['className']::getDefaultConfiguration(
+                $configuration['config'] ?? [],
+                $parentConfiguration['config'] ?? []
+            );
+            if (is_array($defaultConfiguration)) {
+                $configuration['config'] = ConfigurationMergerService::merge($defaultConfiguration, $configuration['config'] ?? []);
             }
         }
 
@@ -218,15 +213,13 @@ class ConfigurationManager implements SingletonInterface
         $mapping = [];
 
         // Apply mapper
-        if (is_string($indexerConfiguration['config']['mapper']['className']) && !empty($indexerConfiguration['config']['mapper']['className'])) {
-            // Class will only be called if it implements a specific interface.
-            // @todo should this throw an exception or is it legit to have classes without dynamic configuration?
-            if (in_array(MapperInterface::class, class_implements($indexerConfiguration['config']['mapper']['className']))) {
-                $mapping = ConfigurationMergerService::merge(
-                    $indexerConfiguration['config']['mapper']['className']::getMapping($indexerConfiguration),
-                    ($indexerConfiguration['config']['mapping'] ?: [])
-                );
-            }
+        // Class will only be called if it implements a specific interface.
+        // @todo should this throw an exception or is it legit to have classes without dynamic configuration?
+        if (is_string($indexerConfiguration['config']['mapper']['className']) && !empty($indexerConfiguration['config']['mapper']['className']) && in_array(MapperInterface::class, class_implements($indexerConfiguration['config']['mapper']['className']))) {
+            $mapping = ConfigurationMergerService::merge(
+                $indexerConfiguration['config']['mapper']['className']::getMapping($indexerConfiguration),
+                ($indexerConfiguration['config']['mapping'] ?: [])
+            );
         }
 
         return $mapping;
@@ -240,14 +233,14 @@ class ConfigurationManager implements SingletonInterface
      * @param string $typeName
      * @param string $collectorPath
      */
-    protected function addRecursiveCollectorConfig($configuration, $parentConfiguration, $typeName, $collectorPath = "")
+    protected function addRecursiveCollectorConfig($configuration, $parentConfiguration, $typeName, $collectorPath = '')
     {
         $configuration = $this->addClassDefaultConfiguration($configuration, $parentConfiguration);
 
         if (!empty($configuration['config'])) {
             if (!empty($configuration['config']['table'])) {
                 if ($configuration['config']['field'] ?? null) {
-                    $collectorPath = $collectorPath ? $collectorPath . "." . $configuration['config']['field'] : $configuration['config']['field'];
+                    $collectorPath = $collectorPath !== '' && $collectorPath !== '0' ? $collectorPath . '.' . $configuration['config']['field'] : $configuration['config']['field'];
                     $this->addSublevelUpdateConfiguration($typeName, $collectorPath, $configuration['config']['table']);
                 } else {
                     $this->addToplevelUpdateConfiguration($typeName, $configuration['config']['table']);

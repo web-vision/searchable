@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\Indexer;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -45,15 +46,15 @@ class PagesIndexerTest extends UnitTestCase
     {
         $this->query = $this->prophesize(BulkQuery::class);
 
-        $this->query->execute()->willReturn("Success");
+        $this->query->execute()->willReturn('Success');
 
         $this->pagesCollector = $this->prophesize(PagesDataCollector::class);
 
         $objectManager = $this->prophesize(ObjectManager::class);
-        $objectManager->get(PagesDataCollector::class, Argument::type("array"), 0)->willReturn($this->pagesCollector->reveal());
+        $objectManager->get(PagesDataCollector::class, Argument::type('array'), 0)->willReturn($this->pagesCollector->reveal());
 
         $previewRenderer = $this->prophesize(PreviewRendererInterface::class);
-        $previewRenderer->render(Argument::type("array"))->willReturn("<p>This is a preview!</p>");
+        $previewRenderer->render(Argument::type('array'))->willReturn('<p>This is a preview!</p>');
 
         $this->linkBuilder = $this->prophesize(LinkBuilderInterface::class);
 
@@ -66,15 +67,15 @@ class PagesIndexerTest extends UnitTestCase
             ],
         ];
 
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['metaField'] = "_meta";
+        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['metaField'] = '_meta';
 
-        $this->pagesIndexer = new PagesIndexer("typo3", 0, $config, $this->query->reveal(), $objectManager->reveal(), $previewRenderer->reveal(), $this->linkBuilder->reveal());
+        $this->pagesIndexer = new PagesIndexer('typo3', 0, $config, $this->query->reveal(), $objectManager->reveal(), $previewRenderer->reveal(), $this->linkBuilder->reveal());
     }
 
     /**
      * @test
      */
-    public function addsPagesToIndex()
+    public function addsPagesToIndex(): void
     {
         $pageList = [
             [
@@ -86,8 +87,7 @@ class PagesIndexerTest extends UnitTestCase
 
         $this->pagesCollector->getRecords()->willReturn($pageList);
 
-
-        $this->linkBuilder->createLinksForBatch(Argument::type("array"), 0)->willReturn([
+        $this->linkBuilder->createLinksForBatch(Argument::type('array'), 0)->willReturn([
             [
                 'uid' => '3',
                 'doktype' => '1',
@@ -113,7 +113,6 @@ class PagesIndexerTest extends UnitTestCase
 
         $this->query->execute()->shouldBeCalled();
         $this->query->resetBody()->shouldBeCalled();
-
 
         foreach ($this->pagesIndexer->run() as $runMessage) {
             //do nothing

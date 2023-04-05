@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace PAGEmachine\Searchable\Middleware;
@@ -28,7 +29,7 @@ final class UriBuilder implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // Simple static check for speed and to avoid side effects for unrelated requests
-        if (strpos($request->getUri()->getPath(), '/-/searchable/urls') !== 0) {
+        if (!str_starts_with((string)$request->getUri()->getPath(), '/-/searchable/urls')) {
             return $handler->handle($request);
         }
 
@@ -42,9 +43,7 @@ final class UriBuilder implements MiddlewareInterface
             $uris[$index] = $contentObjectRenderer->typoLink_URL($configuration);
         }
 
-        $response = new JsonResponse($uris);
-
-        return $response;
+        return new JsonResponse($uris);
     }
 
     private function bootFrontendController(ServerRequestInterface $request): void

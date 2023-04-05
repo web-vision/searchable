@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Utility;
 
 /*
@@ -15,15 +16,15 @@ class BinaryConversionUtility
      *
      * @param  int $value the raw checkbox value
      * @param  int $itemCount max amount of items in this checkbox
-     * @return array
+     * @return int[]
      */
-    public static function convertCheckboxValue($value, $itemCount = 31)
+    public static function convertCheckboxValue($value, $itemCount = 31): array
     {
         $checkedItemKeys = [];
 
         for ($i=0; $i < $itemCount; $i++) {
-            $pow = pow(2, $i);
-            if ($value & $pow) {
+            $pow = 2 ** $i;
+            if (($value & $pow) !== 0) {
                 $checkedItemKeys[] = $i;
             }
         }

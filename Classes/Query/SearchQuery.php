@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Query;
 
 use PAGEmachine\Searchable\LanguageIdTrait;
@@ -45,7 +46,6 @@ class SearchQuery extends AbstractQuery
         return $this;
     }
 
-
     /**
      * Whether to limit the query to a specific language index or not
      * @var bool $respectLanguage
@@ -74,7 +74,7 @@ class SearchQuery extends AbstractQuery
     /**
      * @var int $language
      */
-    protected $language = null;
+    protected $language;
 
     /**
      * @return int
@@ -120,7 +120,6 @@ class SearchQuery extends AbstractQuery
         return $this;
     }
 
-
     /**
      * @var int $size
      */
@@ -153,16 +152,15 @@ class SearchQuery extends AbstractQuery
      */
     public function setPage($page)
     {
-        $this->from = (int)($page - 1) * $this->size;
+        $this->from = ($page - 1) * $this->size;
 
         return $this;
     }
 
-
     /**
      * @var string $searchType
      */
-    protected $searchType = "multi_match";
+    protected $searchType = 'multi_match';
 
     /**
      * @return string
@@ -183,11 +181,10 @@ class SearchQuery extends AbstractQuery
         return $this;
     }
 
-
     /**
      * @var array $searchFields
      */
-    protected $searchFields = ["_all"];
+    protected $searchFields = ['_all'];
 
     /**
      * @return array
@@ -208,11 +205,10 @@ class SearchQuery extends AbstractQuery
         return $this;
     }
 
-
     /**
      * @var string $term
      */
-    protected $term = "";
+    protected $term = '';
 
     /**
      * @return string
@@ -233,7 +229,6 @@ class SearchQuery extends AbstractQuery
         return $this;
     }
 
-
     /**
      * @var array $result
      */
@@ -246,7 +241,6 @@ class SearchQuery extends AbstractQuery
     {
         return $this->result;
     }
-
 
     /**
      * Execute method, should be overriden with the concrete command to the client
@@ -262,12 +256,12 @@ class SearchQuery extends AbstractQuery
             $response = $this->client->search($this->getParameters());
 
             if (!empty($response['errors'])) {
-                $this->logger->error("Search Query response contains errors: ", $response);
+                $this->logger->error('Search Query response contains errors: ', $response);
             }
 
             $this->result = $response;
         } catch (\Exception $e) {
-            $this->logger->error("Elasticsearch-PHP encountered an error while searching: " . $e->getMessage());
+            $this->logger->error('Elasticsearch-PHP encountered an error while searching: ' . $e->getMessage());
 
             $response = [];
         }
@@ -276,10 +270,9 @@ class SearchQuery extends AbstractQuery
     }
 
     /**
-     *
      * @param array $settings
      */
-    public function setDefaultSettings($settings = [])
+    public function setDefaultSettings($settings = []): void
     {
         $this->setSize($settings['resultsPerPage']);
     }
@@ -300,8 +293,6 @@ class SearchQuery extends AbstractQuery
 
     /**
      * Builds the query
-     *
-     * @return void
      */
     protected function build()
     {

@@ -1,9 +1,9 @@
 <?php
+
 namespace PAGEmachine\Searchable;
 
 use Elasticsearch\Client;
 use PAGEmachine\Searchable\Configuration\ConfigurationManager;
-use PAGEmachine\Searchable\Connection;
 use PAGEmachine\Searchable\Service\ConfigurationMergerService;
 use PAGEmachine\Searchable\Service\ExtconfService;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -20,9 +20,8 @@ class IndexManager implements SingletonInterface
 {
     /**
      * Elasticsearch client
-     * @var Client
      */
-    protected $client;
+    protected Client $client;
 
     /**
      * @param Client|null $client
@@ -43,10 +42,11 @@ class IndexManager implements SingletonInterface
     /**
      * Returns index stats (for backend modules)
      *
-     * @return array
+     * @return array{health: mixed[], indices: array<int|string, array{name: mixed, language: mixed, types?: array<int|string, array{name: mixed, documents: mixed}>&mixed[]}>}
      */
-    public function getStats()
+    public function getStats(): array
     {
+        $stats = [];
         $stats['health'] = $this->client->cluster()->health();
 
         $info = [];
@@ -76,16 +76,15 @@ class IndexManager implements SingletonInterface
     /**
      * Deletes and recreates an index
      * @param  string $index
-     * @return void
      */
-    public function resetIndex($index)
+    public function resetIndex($index): void
     {
         $deleteParams = [
             'index' => $index,
         ];
 
         if ($this->client->indices()->exists($deleteParams)) {
-            $response = $this->client->indices()->delete($deleteParams);
+            $this->client->indices()->delete($deleteParams);
         }
 
         $this->createIndex($index);
@@ -111,7 +110,7 @@ class IndexManager implements SingletonInterface
 
         $mapping = ConfigurationManager::getInstance()->getMapping($index);
 
-        if (!empty($mapping)) {
+        if ($mapping !== []) {
             $params['body']['mappings'] = $mapping;
         }
 
@@ -120,10 +119,8 @@ class IndexManager implements SingletonInterface
 
     /**
      * Resets the update index
-     *
-     * @return void
      */
-    public function resetUpdateIndex()
+    public function resetUpdateIndex(): void
     {
         $this->resetIndex(
             ExtconfService::getInstance()->getUpdateIndex()

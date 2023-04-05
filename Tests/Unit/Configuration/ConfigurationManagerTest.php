@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\Configuration;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -47,7 +48,7 @@ class ConfigurationManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function mergesToplevelConfiguration()
+    public function mergesToplevelConfiguration(): void
     {
         $configuration = [
             'pages' => [
@@ -69,13 +70,13 @@ class ConfigurationManagerTest extends UnitTestCase
             ],
         ];
 
-        $this->assertEquals($expectedConfiguration, $this->configurationManager->getIndexerConfiguration());
+        self::assertEquals($expectedConfiguration, $this->configurationManager->getIndexerConfiguration());
     }
 
     /**
      * @test
      */
-    public function doesNothingIfNoClassIsAvailable()
+    public function doesNothingIfNoClassIsAvailable(): void
     {
         $configuration = [
             'pages' => [
@@ -86,13 +87,13 @@ class ConfigurationManagerTest extends UnitTestCase
         ];
         $this->extconfService->getIndexerConfiguration()->willReturn($configuration);
 
-        $this->assertEquals($configuration, $this->configurationManager->getIndexerConfiguration());
+        self::assertEquals($configuration, $this->configurationManager->getIndexerConfiguration());
     }
 
     /**
      * @test
      */
-    public function mergesRecursiveConfiguration()
+    public function mergesRecursiveConfiguration(): void
     {
         $configuration = [
             'pages' => [
@@ -128,13 +129,13 @@ class ConfigurationManagerTest extends UnitTestCase
             ],
         ];
 
-        $this->assertEquals($expectedConfiguration, $this->configurationManager->getIndexerConfiguration());
+        self::assertEquals($expectedConfiguration, $this->configurationManager->getIndexerConfiguration());
     }
 
     /**
      * @test
      */
-    public function mergesMultipleConfigurationsOnTheSameLevel()
+    public function mergesMultipleConfigurationsOnTheSameLevel(): void
     {
         $configuration = [
             'pages' => [
@@ -188,13 +189,13 @@ class ConfigurationManagerTest extends UnitTestCase
             ],
         ];
 
-        $this->assertEquals($expectedConfiguration, $this->configurationManager->getIndexerConfiguration());
+        self::assertEquals($expectedConfiguration, $this->configurationManager->getIndexerConfiguration());
     }
 
     /**
      * @test
      */
-    public function createsMappingWithUserPrecedence()
+    public function createsMappingWithUserPrecedence(): void
     {
         $configuration = [
             'pages' => [
@@ -217,15 +218,15 @@ class ConfigurationManagerTest extends UnitTestCase
 
         $mapping = $this->configurationManager->getMapping('pages');
 
-        $this->assertEquals('existingValue', $mapping['pages']['properties']['existingKey']);
-        $this->assertEquals('overrideValue', $mapping['pages']['properties']['overrideKey']);
-        $this->assertEquals('newMapperValue', $mapping['pages']['properties']['newKey']);
+        self::assertEquals('existingValue', $mapping['pages']['properties']['existingKey']);
+        self::assertEquals('overrideValue', $mapping['pages']['properties']['overrideKey']);
+        self::assertEquals('newMapperValue', $mapping['pages']['properties']['newKey']);
     }
 
     /**
      * @test
      */
-    public function enrichesMappingByFeatures()
+    public function enrichesMappingByFeatures(): void
     {
         $configuration = [
             'pages' => [
@@ -251,15 +252,15 @@ class ConfigurationManagerTest extends UnitTestCase
 
         $mapping = $this->configurationManager->getMapping('pages');
 
-        $this->assertEquals('existingValue', $mapping['pages']['properties']['existingKey']);
-        $this->assertEquals('overrideValue', $mapping['pages']['properties']['overrideKey']);
-        $this->assertEquals('featurevalue', $mapping['pages']['featureproperty']);
+        self::assertEquals('existingValue', $mapping['pages']['properties']['existingKey']);
+        self::assertEquals('overrideValue', $mapping['pages']['properties']['overrideKey']);
+        self::assertEquals('featurevalue', $mapping['pages']['featureproperty']);
     }
 
     /**
      * @test
      */
-    public function createsUpdateConfiguration()
+    public function createsUpdateConfiguration(): void
     {
         $configuration = [
             'pages' => [
@@ -332,6 +333,6 @@ class ConfigurationManagerTest extends UnitTestCase
             ],
         ];
 
-        $this->assertEquals($expectedUpdateConfiguration, $this->configurationManager->getUpdateConfiguration());
+        self::assertEquals($expectedUpdateConfiguration, $this->configurationManager->getUpdateConfiguration());
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Eid;
 
 use PAGEmachine\Searchable\Query\SearchQuery;
@@ -17,9 +18,9 @@ class Search extends AbstractEidHandler
      * Returns results for given term
      *
      * @param  string $term
-     * @return array $suggestions
+     * @return array{results: mixed, totalPages: mixed, currentPage: int} $suggestions
      */
-    protected function getResults($term)
+    protected function getResults($term): array
     {
         $query = GeneralUtility::makeInstance(SearchQuery::class);
         $page = (int)($this->options['page'] ?: 1);

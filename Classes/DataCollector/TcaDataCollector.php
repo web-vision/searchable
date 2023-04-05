@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector;
 
 use PAGEmachine\Searchable\DataCollector\RelationResolver\ResolverManager;
@@ -27,9 +28,6 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
      */
     protected $pageRepository;
 
-    /**
-     * @param PageRepository $pageRepository
-     */
     public function injectPageRepository(PageRepository $pageRepository): void
     {
         $this->pageRepository = $pageRepository;
@@ -40,9 +38,6 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
      */
     protected $resolverManager;
 
-    /**
-     * @param ResolverManager $resolverManager
-     */
     public function injectResolverManager(ResolverManager $resolverManager): void
     {
         $this->resolverManager = $resolverManager;
@@ -76,7 +71,7 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
      *
      * @var array|null
      */
-    protected $fieldWhitelist = null;
+    protected $fieldWhitelist;
 
     /**
      * This function will be called by the ConfigurationManager.
@@ -90,13 +85,11 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
         $defaultConfiguration = static::$defaultConfiguration;
 
         //If this is a subcollector, try fetching the table name from the parent TCA
-        if (!empty($GLOBALS['TCA'])) {
-            if (empty($currentSubconfiguration['table']) && empty($defaultConfiguration['table'])) {
-                if ($parentConfiguration['table'] && $GLOBALS['TCA'][$parentConfiguration['table']]['columns'][$currentSubconfiguration['field']]['config']['foreign_table']) {
-                    $defaultConfiguration['table'] = $GLOBALS['TCA'][$parentConfiguration['table']]['columns'][$currentSubconfiguration['field']]['config']['foreign_table'];
-                } else {
-                    throw new \Exception("Table must be set for TCA record indexing.", 1487344697);
-                }
+        if (!empty($GLOBALS['TCA']) && (empty($currentSubconfiguration['table']) && empty($defaultConfiguration['table']))) {
+            if ($parentConfiguration['table'] && $GLOBALS['TCA'][$parentConfiguration['table']]['columns'][$currentSubconfiguration['field']]['config']['foreign_table']) {
+                $defaultConfiguration['table'] = $GLOBALS['TCA'][$parentConfiguration['table']]['columns'][$currentSubconfiguration['field']]['config']['foreign_table'];
+            } else {
+                throw new \Exception('Table must be set for TCA record indexing.', 1487344697);
             }
         }
 
@@ -108,9 +101,8 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
      *
      *
      * @param string                 $field        Fieldname to apply this collector to
-     * @param DataCollectorInterface $collector
      */
-    public function addSubCollector($field, DataCollectorInterface $collector)
+    public function addSubCollector($field, DataCollectorInterface $collector): void
     {
         parent::addSubCollector($field, $collector);
 
@@ -137,9 +129,8 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
      * Returns true if a subcollector exists for given column (this is the TCA column, not the subtype fieldname!)
      *
      * @param  string $column
-     * @return bool
      */
-    public function subCollectorExistsForColumn($column)
+    public function subCollectorExistsForColumn($column): bool
     {
         if (!empty($this->config['subCollectors'])) {
             foreach ($this->config['subCollectors'] as $subconfig) {
@@ -151,7 +142,6 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
 
         return false;
     }
-
 
     /**
      * @return array
@@ -172,11 +162,10 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
         if (!$this->isTcaAvailable()) {
             yield from [];
         }
-        $tca = $this->getTcaConfiguration();
+        $this->getTcaConfiguration();
 
         $queryBuilder = $this->buildUidListQueryBuilder(true);
 
-        /** @var \Doctrine\DBAL\ForwardCompatibility\Result */
         $result = $queryBuilder->execute();
 
         foreach ($result as $rawRecord) {
@@ -211,7 +200,6 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
                 ]);
             }
 
-            /** @var \Doctrine\DBAL\ForwardCompatibility\Result */
             $result = $queryBuilder->execute();
             $record = $result->fetchAssociative();
 
@@ -220,7 +208,7 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
 
                 $fullRecord = $this->getRecord($sourceLanguageUid);
 
-                if (!empty($fullRecord)) {
+                if ($fullRecord !== []) {
                     yield $fullRecord;
                     continue;
                 }
@@ -240,7 +228,7 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
     {
         $data = FormDataRecord::getInstance()->getRecord($identifier, $this->config['table'], $this->getFieldWhitelist());
 
-        if (empty($data)) {
+        if ($data === []) {
             return [];
         }
 
@@ -249,7 +237,7 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
 
         $record = $this->languageOverlay($record);
 
-        if (!empty($record)) {
+        if ($record !== []) {
             //Cleanup
             $record = $this->processColumns($record);
             $record = $this->applyFeatures($record);
@@ -340,7 +328,7 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
      * Modify this method if you want to apply custom restrictions
      *
      * @param  bool $applyLanguageRestriction
-     * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder $subCollector
+     * @return QueryBuilder $subCollector
      */
     public function buildUidListQueryBuilder($applyLanguageRestriction = false)
     {
@@ -348,7 +336,7 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
         $whereExpressions = [];
 
         $queryBuilder
-            ->select($this->config['table'].'.uid')
+            ->select($this->config['table'] . '.uid')
             ->from($this->config['table']);
 
         //PID restriction
@@ -359,7 +347,7 @@ class TcaDataCollector extends AbstractDataCollector implements DataCollectorInt
         //LanguageRestriction
         if ($applyLanguageRestriction && !empty($this->getTcaConfiguration()['ctrl']['languageField'])) {
             $whereExpressions[] = $queryBuilder->expr()->in(
-                $this->config['table'] . "." . $this->getTcaConfiguration()['ctrl']['languageField'],
+                $this->config['table'] . '.' . $this->getTcaConfiguration()['ctrl']['languageField'],
                 $queryBuilder->createNamedParameter([0, -1], Connection::PARAM_INT_ARRAY)
             );
         }

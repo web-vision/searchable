@@ -1,10 +1,12 @@
 <?php
+
 namespace PAGEmachine\Searchable\Utility;
 
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
@@ -21,15 +23,13 @@ class TsfeUtility
 {
     /**
      * Initializes TSFE. This is necessary to have proper environment for typoLink.
-     *
-     * @return    void
      */
     public static function createTSFE()
     {
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $site = array_values($siteFinder->getAllSites())[0] ?? null;
 
-        if ($site === null) {
+        if (!$site instanceof Site) {
             throw new \RuntimeException('No site found for TSFE setup', 1610444900);
         }
 

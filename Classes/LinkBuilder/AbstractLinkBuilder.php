@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\LinkBuilder;
 
 use PAGEmachine\Searchable\Configuration\DynamicConfigurationInterface;
@@ -54,9 +55,9 @@ abstract class AbstractLinkBuilder implements LinkBuilderInterface, DynamicConfi
     protected $config = [];
 
     /**
-     * @var \PAGEmachine\Searchable\LinkBuilder\Frontend\FrontendRequestInterface
+     * @var FrontendRequestInterface
      */
-    protected $frontendRequest;
+    protected FrontendRequest $frontendRequest;
 
     /**
      * @param array $config
@@ -167,7 +168,6 @@ abstract class AbstractLinkBuilder implements LinkBuilderInterface, DynamicConfi
     }
 
     /**
-     *
      * @param  array $configuration
      * @param  array $record
      * @return array
@@ -187,11 +187,10 @@ abstract class AbstractLinkBuilder implements LinkBuilderInterface, DynamicConfi
         return $configuration;
     }
 
-    protected function getFrontendLinks($configuration): array
+    protected function getFrontendLinks(array $configuration): array
     {
         $baseUri = new Uri(ExtconfService::getInstance()->getFrontendDomain());
-        $uris = $this->frontendRequest->send($baseUri, $configuration);
 
-        return $uris;
+        return $this->frontendRequest->send($baseUri, $configuration);
     }
 }

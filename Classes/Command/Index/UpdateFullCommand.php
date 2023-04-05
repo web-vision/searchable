@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace PAGEmachine\Searchable\Command\Index;
@@ -12,7 +13,7 @@ final class UpdateFullCommand extends AbstractIndexCommand
     /**
      * Configures the current command.
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Process search indexers')

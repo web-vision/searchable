@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector\TCA\DataProvider;
 
 use TYPO3\CMS\Backend\Form\FormDataProvider\AbstractItemProvider;
@@ -12,7 +13,6 @@ class TcaInlineCopyToDbRecord extends AbstractItemProvider implements FormDataPr
     /**
      * Resolve inline fields
      *
-     * @param array $result
      * @return array
      */
     public function addData(array $result)
@@ -38,9 +38,8 @@ class TcaInlineCopyToDbRecord extends AbstractItemProvider implements FormDataPr
      * Is column of type "inline"
      *
      * @param array $fieldConfig
-     * @return bool
      */
-    protected function isInlineField($fieldConfig)
+    protected function isInlineField($fieldConfig): bool
     {
         return !empty($fieldConfig['config']['type']) && $fieldConfig['config']['type'] === 'inline';
     }

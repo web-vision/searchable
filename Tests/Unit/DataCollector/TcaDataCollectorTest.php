@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\DataCollector;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -53,7 +54,6 @@ class TcaDataCollectorTest extends UnitTestCase
         $this->objectManager = $this->prophesize(ObjectManager::class);
         $this->objectManager->get(Argument::any())->willReturn(null);
 
-
         GeneralUtility::setSingletonInstance(FormDataRecord::class, $this->formDataRecord->reveal());
         GeneralUtility::setSingletonInstance(PlainValueProcessor::class, $this->plainValueProcessor->reveal());
         GeneralUtility::setSingletonInstance(OverlayUtility::class, $this->overlayUtility->reveal());
@@ -62,7 +62,7 @@ class TcaDataCollectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function processesFlatRecord()
+    public function processesFlatRecord(): void
     {
         $recordTca = [
             'ctrl' => [
@@ -91,7 +91,7 @@ class TcaDataCollectorTest extends UnitTestCase
                 ],
                 'unusedrelation' => [
                     'config' => [
-                        'type' => 'select',
+                        'type' => 'select', 'renderType' => 'selectSingle',
                     ],
                 ],
                 'emptyfield' => [
@@ -141,13 +141,12 @@ class TcaDataCollectorTest extends UnitTestCase
             'emptyfield',
         ])->shouldBeCalled()->willReturn($record);
 
-        $this->overlayUtility->languageOverlay('example_table', $record['databaseRow'], 0, Argument::type("array"), 1)
+        $this->overlayUtility->languageOverlay('example_table', $record['databaseRow'], 0, Argument::type('array'), 1)
             ->shouldBeCalled()
             ->willReturn($record['databaseRow']);
 
-        $this->plainValueProcessor->processCheckboxField("2", Argument::type("array"))->shouldBeCalled()->willReturn("checkboxvalue");
-        $this->plainValueProcessor->processRadioField("3", Argument::type("array"))->shouldBeCalled()->willReturn("radiovalue");
-
+        $this->plainValueProcessor->processCheckboxField('2', Argument::type('array'))->shouldBeCalled()->willReturn('checkboxvalue');
+        $this->plainValueProcessor->processRadioField('3', Argument::type('array'))->shouldBeCalled()->willReturn('radiovalue');
 
         $expectedOutput = [
             'uid' => 123,
@@ -157,20 +156,20 @@ class TcaDataCollectorTest extends UnitTestCase
             'radiofield' => 'radiovalue',
         ];
 
-        $this->assertEquals($expectedOutput, $tcaDataCollector->getRecord(123));
+        self::assertEquals($expectedOutput, $tcaDataCollector->getRecord(123));
     }
 
     /**
      * @test
      */
-    public function processesRelations()
+    public function processesRelations(): void
     {
         $subCollector = $this->prophesize(TcaDataCollector::class);
         $subCollector->getConfig()->willReturn(
             ['field' => 'selectfield']
         );
 
-        $this->objectManager->get(TcaDataCollector::class, Argument::type("array"), 0)->willReturn($subCollector->reveal());
+        $this->objectManager->get(TcaDataCollector::class, Argument::type('array'), 0)->willReturn($subCollector->reveal());
 
         $configuration = [
             'table' => 'example_table',
@@ -219,21 +218,21 @@ class TcaDataCollectorTest extends UnitTestCase
 
         $this->formDataRecord->getRecord(123, 'example_table', Argument::type('array'))->willReturn($record);
 
-        $this->overlayUtility->languageOverlay('example_table', $record['databaseRow'], 0, Argument::type("array"), 1)
+        $this->overlayUtility->languageOverlay('example_table', $record['databaseRow'], 0, Argument::type('array'), 1)
             ->shouldBeCalled()
             ->willReturn($record['databaseRow']);
 
         $resolver = $this->prophesize(SelectRelationResolver::class);
-        $resolver->resolveRelation("selectfield", $record['databaseRow'], $subCollector, $tcaDataCollector)->willReturn([[
+        $resolver->resolveRelation('selectfield', $record['databaseRow'], $subCollector, $tcaDataCollector)->willReturn([[
             'uid' => 123,
             'title' => 'foobar',
         ]]);
 
         $resolverManager = $this->prophesize(ResolverManager::class);
-        $resolverManager->findResolverForRelation("selectfield", $subCollector, $tcaDataCollector)->willReturn($resolver->reveal());
-        $this->inject($tcaDataCollector, "resolverManager", $resolverManager->reveal());
+        $resolverManager->findResolverForRelation('selectfield', $subCollector, $tcaDataCollector)->willReturn($resolver->reveal());
+        $this->inject($tcaDataCollector, 'resolverManager', $resolverManager->reveal());
 
-        $tcaDataCollector->addSubCollector("es_selectfield", $subCollector->reveal());
+        $tcaDataCollector->addSubCollector('es_selectfield', $subCollector->reveal());
 
         $expectedOutput = [
             'uid' => 1,
@@ -246,13 +245,13 @@ class TcaDataCollectorTest extends UnitTestCase
             ],
         ];
 
-        $this->assertEquals($expectedOutput, $tcaDataCollector->getRecord(123));
+        self::assertEquals($expectedOutput, $tcaDataCollector->getRecord(123));
     }
 
     /**
      * @test
      */
-    public function processesTranslations()
+    public function processesTranslations(): void
     {
         $configuration = [
             'table' => 'example_table',
@@ -294,8 +293,8 @@ class TcaDataCollectorTest extends UnitTestCase
 
         $this->formDataRecord->getRecord(1, 'example_table', Argument::type('array'))->willReturn($record);
 
-        $this->overlayUtility->languageOverlay('example_table', $baseRow, 1, Argument::type("array"), 1)->shouldBeCalled()->willReturn($translatedRow);
+        $this->overlayUtility->languageOverlay('example_table', $baseRow, 1, Argument::type('array'), 1)->shouldBeCalled()->willReturn($translatedRow);
 
-        $this->assertEquals($translatedRow, $tcaDataCollector->getRecord(1));
+        self::assertEquals($translatedRow, $tcaDataCollector->getRecord(1));
     }
 }

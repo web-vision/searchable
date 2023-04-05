@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Indexer;
 
 use PAGEmachine\Searchable\Configuration\ConfigurationManager;
@@ -17,9 +18,6 @@ class IndexerFactory implements SingletonInterface
      */
     protected $objectManager;
 
-    /**
-     * @param ObjectManager $objectManager
-     */
     public function injectObjectManager(ObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
@@ -68,8 +66,7 @@ class IndexerFactory implements SingletonInterface
 
         if ($indexerConfiguration[$type]) {
             return $this->objectManager->get($indexerConfiguration[$type]['className'], $index, $language, $indexerConfiguration[$type]['config']);
-        } else {
-            return null;
         }
+        return null;
     }
 }

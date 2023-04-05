@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Feature;
 
 use PAGEmachine\Searchable\Feature\Traits\FieldCollectionTrait;
@@ -36,10 +37,9 @@ class CompletionSuggestFeature extends AbstractFeature implements FeatureInterfa
     ];
 
     /**
-     *
      * @var string
      */
-    public static $featureName = "completionSuggest";
+    public static $featureName = 'completionSuggest';
 
     /**
      * Entry point to modify mapping
@@ -78,7 +78,7 @@ class CompletionSuggestFeature extends AbstractFeature implements FeatureInterfa
 
         $content = $this->collectFieldFromSubRecords($record, $this->config['completionField'], $content, true);
 
-        if (!empty($content)) {
+        if ($content !== []) {
             $record[$this->config['completionField']]['input'] = $content;
         }
 
@@ -94,11 +94,9 @@ class CompletionSuggestFeature extends AbstractFeature implements FeatureInterfa
     protected function splitFields($fields = [])
     {
         $splittedContent = [];
-        if (!empty($fields)) {
-            foreach ($fields as $field) {
-                $split = preg_split($this->config['splitRegex'], $field);
-                $splittedContent = array_merge($splittedContent, $split);
-            }
+        foreach ($fields as $field) {
+            $split = preg_split($this->config['splitRegex'], (string)$field);
+            $splittedContent = array_merge($splittedContent, $split);
         }
 
         return $splittedContent;
@@ -107,7 +105,6 @@ class CompletionSuggestFeature extends AbstractFeature implements FeatureInterfa
     /**
      * Modifies a query before it is executed
      *
-     * @param QueryInterface $query
      * @return QueryInterface
      */
     public function modifyQuery(QueryInterface $query)

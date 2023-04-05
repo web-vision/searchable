@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\DataCollector\Utility;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -30,16 +31,12 @@ class FieldListUtilityTest extends UnitTestCase
      * @test
      * @dataProvider whitelistCombinations
      */
-    public function evaluatesWhitelistItem($item, $list, $allowed)
+    public function evaluatesWhitelistItem(string $item, array $list, bool $allowed): void
     {
-        $this->assertEquals($allowed, $this->fieldListUtility->shouldInclude($item, $list, FieldListUtility::MODE_WHITELIST));
+        self::assertEquals($allowed, $this->fieldListUtility->shouldInclude($item, $list, FieldListUtility::MODE_WHITELIST));
     }
 
-    /**
-     *
-     * @return array
-     */
-    public function whitelistCombinations()
+    public function whitelistCombinations(): array
     {
         return [
             'item included' => ['allowed', ['allowed', 'foo', 'bar'], true],
@@ -48,21 +45,16 @@ class FieldListUtilityTest extends UnitTestCase
         ];
     }
 
-
     /**
      * @test
      * @dataProvider blacklistCombinations
      */
-    public function evaluatesBlacklistItem($item, $list, $allowed)
+    public function evaluatesBlacklistItem(string $item, array $list, bool $allowed): void
     {
-        $this->assertEquals($allowed, $this->fieldListUtility->shouldInclude($item, $list, FieldListUtility::MODE_BLACKLIST));
+        self::assertEquals($allowed, $this->fieldListUtility->shouldInclude($item, $list, FieldListUtility::MODE_BLACKLIST));
     }
 
-    /**
-     *
-     * @return array
-     */
-    public function blacklistCombinations()
+    public function blacklistCombinations(): array
     {
         return [
             'item included' => ['notallowed', ['notallowed', 'foo', 'bar'], false],

@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Preview;
 
 /*
@@ -27,14 +28,11 @@ class SimplePreviewRenderer extends AbstractPreviewRenderer implements PreviewRe
      * Renders the preview
      *
      * @param  array $record
-     * @return string
      */
-    public function render($record)
+    public function render($record): string
     {
         $rawfield = $record[$this->config['field']];
 
-        $processedField = substr($rawfield, 0, 200) . "...";
-
-        return $processedField;
+        return substr((string)$rawfield, 0, 200) . '...';
     }
 }

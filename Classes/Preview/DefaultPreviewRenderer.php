@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Preview;
 
 /*
@@ -14,12 +15,9 @@ class DefaultPreviewRenderer extends AbstractPreviewRenderer implements PreviewR
      * Renders the preview
      *
      * @param  array $record
-     * @return string
      */
-    public function render($record)
+    public function render($record): string
     {
-        $preview = implode(", ", $record);
-
-        return $preview;
+        return implode(', ', $record);
     }
 }

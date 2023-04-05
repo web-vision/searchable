@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\Feature;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -36,7 +37,7 @@ class CompletionSuggestFeatureTest extends UnitTestCase
     /**
      * @test
      */
-    public function addsFieldsToplevel()
+    public function addsFieldsToplevel(): void
     {
         $record = [
             'fieldone' => 'one',
@@ -44,13 +45,13 @@ class CompletionSuggestFeatureTest extends UnitTestCase
         ];
         $record = $this->feature->modifyRecord($record);
 
-        $this->assertEquals(['one', 'two'], $record['autosuggest']['input']);
+        self::assertEquals(['one', 'two'], $record['autosuggest']['input']);
     }
 
     /**
      * @test
      */
-    public function addsFieldsFromChild()
+    public function addsFieldsFromChild(): void
     {
         $record = [
             'fieldone' => 'one',
@@ -64,14 +65,14 @@ class CompletionSuggestFeatureTest extends UnitTestCase
         ];
         $record = $this->feature->modifyRecord($record);
 
-        $this->assertEquals(['one', 'two', 'three'], $record['autosuggest']['input']);
-        $this->assertArrayNotHasKey('autosuggest', $record['child']);
+        self::assertEquals(['one', 'two', 'three'], $record['autosuggest']['input']);
+        self::assertArrayNotHasKey('autosuggest', $record['child']);
     }
 
     /**
      * @test
      */
-    public function addsFieldsFromChildren()
+    public function addsFieldsFromChildren(): void
     {
         $record = [
             'fieldone' => 'one',
@@ -87,7 +88,7 @@ class CompletionSuggestFeatureTest extends UnitTestCase
         ];
         $record = $this->feature->modifyRecord($record);
 
-        $this->assertEquals(['one', 'two', 'three'], $record['autosuggest']['input']);
-        $this->assertArrayNotHasKey('autosuggest', $record['children'][0]);
+        self::assertEquals(['one', 'two', 'three'], $record['autosuggest']['input']);
+        self::assertArrayNotHasKey('autosuggest', $record['children'][0]);
     }
 }

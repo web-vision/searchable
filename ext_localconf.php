@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
@@ -25,7 +26,6 @@ if (version_compare(\TYPO3\CMS\Core\Utility\VersionNumberUtility::getCurrentTypo
             \PAGEmachine\Searchable\Controller\SearchController::class => 'liveSearchbar',
         ]
     );
-
 
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
         'Searchable',
@@ -71,7 +71,6 @@ if (version_compare(\TYPO3\CMS\Core\Utility\VersionNumberUtility::getCurrentTypo
         ]
     );
 }
-
 
 // Add custom logging
 if (empty($GLOBALS['TYPO3_CONF_VARS']['LOG']['PAGEmachine']['Searchable']['writerConfiguration'])) {

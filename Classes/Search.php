@@ -1,9 +1,8 @@
 <?php
+
 namespace PAGEmachine\Searchable;
 
 use Elasticsearch\Client;
-use PAGEmachine\Searchable\Connection;
-use PAGEmachine\Searchable\LanguageIdTrait;
 use PAGEmachine\Searchable\Service\ExtconfService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -21,9 +20,8 @@ class Search implements SingletonInterface
 
     /**
      * Elasticsearch client
-     * @var Client
      */
-    protected $client;
+    protected Client $client;
 
     /**
      * @param Client|null $client
@@ -65,10 +63,8 @@ class Search implements SingletonInterface
             ],
         ];
 
-        if (!empty($options)) {
-            foreach ($options as $key => $option) {
-                $params['body'][$key] = $option;
-            }
+        foreach ($options as $key => $option) {
+            $params['body'][$key] = $option;
         }
 
         if ($respectLanguage === true) {
@@ -76,10 +72,7 @@ class Search implements SingletonInterface
 
             $params['index'] = ExtconfService::hasIndex($language) ? ExtconfService::getIndex($language) : ExtconfService::getIndex();
         }
-
-
-        $result = $this->client->search($params);
-        return $result;
+        return $this->client->search($params);
     }
 
     /**
@@ -101,7 +94,6 @@ class Search implements SingletonInterface
             ],
         ];
         $result = $this->client->search($params);
-
 
         $updates = [];
 

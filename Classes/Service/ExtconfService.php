@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Service;
 
 use PAGEmachine\Searchable\UndefinedIndexException;
@@ -25,9 +26,9 @@ class ExtconfService implements SingletonInterface
     /**
      * Returns all available indices
      *
-     * @return array
+     * @return array<int|string, mixed>
      */
-    public static function getIndices()
+    public static function getIndices(): array
     {
         $indicesConfiguration = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['indices'];
         $indices = [];
@@ -103,15 +104,10 @@ class ExtconfService implements SingletonInterface
      * Returns true if an index for the given language exists, otherwise false
      *
      * @param  int $language
-     * @return bool
      */
-    public static function hasIndex($language = 0)
+    public static function hasIndex($language = 0): bool
     {
-        if (!empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['indices'][$language])) {
-            return true;
-        }
-
-        return false;
+        return !empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['indices'][$language]);
     }
 
     /**
@@ -155,14 +151,10 @@ class ExtconfService implements SingletonInterface
 
     /**
      * Returns the hosts configuration
-     *
-     * @return array
      */
-    public function getHostsSettings()
+    public function getHostsSettings(): array
     {
-        $hosts = explode(",", $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['extensionManagement']['connection']['hosts']);
-
-        return $hosts;
+        return explode(',', (string)$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['extensionManagement']['connection']['hosts']);
     }
 
     /**

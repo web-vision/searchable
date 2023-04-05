@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Query;
 
 /*
@@ -12,15 +13,9 @@ use PAGEmachine\Searchable\Configuration\ConfigurationManager;
  */
 class DatabaseRecordUpdateQuery
 {
-    /**
-     * @var UpdateQuery
-     */
-    protected $updateQuery;
+    protected UpdateQuery $updateQuery;
 
-    /**
-     * @var array
-     */
-    protected $updateConfiguration = [];
+    protected array $updateConfiguration;
 
     /**
      * @param array|null $updateConfiguration
@@ -36,11 +31,10 @@ class DatabaseRecordUpdateQuery
      *
      * @param string $table
      * @param int $uid
-     * @return void
      */
-    public function updateToplevel($table, $uid)
+    public function updateToplevel($table, $uid): void
     {
-        $configuration = !empty($this->updateConfiguration['database']['toplevel'][$table]) ? $this->updateConfiguration['database']['toplevel'][$table] : [];
+        $configuration = empty($this->updateConfiguration['database']['toplevel'][$table]) ? [] : $this->updateConfiguration['database']['toplevel'][$table];
         foreach ($configuration as $type) {
             $this->updateQuery->addUpdate($type, 'uid', (int)$uid);
         }
@@ -51,11 +45,10 @@ class DatabaseRecordUpdateQuery
      *
      * @param string $table
      * @param int $uid
-     * @return void
      */
-    public function updateSublevel($table, $uid)
+    public function updateSublevel($table, $uid): void
     {
-        $configuration = !empty($this->updateConfiguration['database']['sublevel'][$table]) ? $this->updateConfiguration['database']['sublevel'][$table] : [];
+        $configuration = empty($this->updateConfiguration['database']['sublevel'][$table]) ? [] : $this->updateConfiguration['database']['sublevel'][$table];
         foreach ($configuration as $type => $path) {
             $this->updateQuery->addUpdate($type, $path . '.uid', (int)$uid);
         }

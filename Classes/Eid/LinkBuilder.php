@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Eid;
 
 use PAGEmachine\Searchable\Utility\TsfeUtility;
@@ -17,10 +18,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  */
 class LinkBuilder
 {
-    /**
-     * @var ContentObjectRenderer
-     */
-    protected $contentObjectRenderer;
+    protected ContentObjectRenderer $contentObjectRenderer;
 
     public function __construct()
     {
@@ -30,8 +28,6 @@ class LinkBuilder
 
     /**
      * Process request
-     *
-     * @param ServerRequestInterface $request
      */
     public function processRequest(ServerRequestInterface $request): ResponseInterface
     {
@@ -46,7 +42,7 @@ class LinkBuilder
         }
 
         $response = (new Response())->withHeader('Content-Type', 'application/json; charset=utf-8');
-        $response->getBody()->write(json_encode($links));
+        $response->getBody()->write(json_encode($links, JSON_THROW_ON_ERROR));
 
         return $response;
     }

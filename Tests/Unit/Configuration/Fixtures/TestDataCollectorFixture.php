@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\Configuration\Fixtures;
 
 use PAGEmachine\Searchable\DataCollector\AbstractDataCollector;
@@ -6,7 +7,6 @@ use PAGEmachine\Searchable\DataCollector\AbstractDataCollector;
 /*
  * This file is part of the PAGEmachine Searchable project.
  */
-
 
 class TestDataCollectorFixture extends AbstractDataCollector
 {
@@ -19,14 +19,13 @@ class TestDataCollectorFixture extends AbstractDataCollector
      * Fetches a record
      *
      * @param  int $identifier
-     * @return array
      */
-    public function getRecord($identifier)
+    public function getRecord($identifier): array
     {
         return [];
     }
 
-    public function getRecords()
+    public function getRecords(): array
     {
         return [];
     }

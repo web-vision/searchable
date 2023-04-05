@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Feature\Traits;
 
 /*
@@ -15,8 +16,9 @@ trait FieldCollectionTrait
      *
      * @param array $record
      * @param array $fields
+     * @return mixed[]
      */
-    protected function collectFields($record, $fields, $content = [])
+    protected function collectFields($record, $fields, $content = []): array
     {
         $content = [];
 
@@ -66,7 +68,6 @@ trait FieldCollectionTrait
     }
 
     /**
-     *
      * @param array $collection
      * @param mixed $field
      * @return array $collection

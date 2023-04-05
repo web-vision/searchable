@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\LinkBuilder;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -29,7 +30,7 @@ class FileLinkBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function createsFileLinkForToplevelFileRecord()
+    public function createsFileLinkForToplevelFileRecord(): void
     {
         $config = [
             'titleField' => 'title',
@@ -48,13 +49,13 @@ class FileLinkBuilderTest extends UnitTestCase
 
         $linkConfiguration = $this->linkBuilder->finalizeTypoLinkConfig([], $record);
 
-        $this->assertEquals('t3://file?uid=22', $linkConfiguration['parameter']);
+        self::assertEquals('t3://file?uid=22', $linkConfiguration['parameter']);
     }
 
     /**
      * @test
      */
-    public function createsFileLinkForSingleSublevelFile()
+    public function createsFileLinkForSingleSublevelFile(): void
     {
         $config = [
             'titleField' => 'title',
@@ -73,13 +74,13 @@ class FileLinkBuilderTest extends UnitTestCase
 
         $linkConfiguration = $this->linkBuilder->finalizeTypoLinkConfig([], $record);
 
-        $this->assertEquals('t3://file?uid=25', $linkConfiguration['parameter']);
+        self::assertEquals('t3://file?uid=25', $linkConfiguration['parameter']);
     }
 
     /**
      * @test
      */
-    public function createsFileLinkForNestedSublevelFile()
+    public function createsFileLinkForNestedSublevelFile(): void
     {
         $config = [
             'titleField' => 'title',
@@ -100,6 +101,6 @@ class FileLinkBuilderTest extends UnitTestCase
 
         $linkConfiguration = $this->linkBuilder->finalizeTypoLinkConfig([], $record);
 
-        $this->assertEquals('t3://file?uid=25', $linkConfiguration['parameter']);
+        self::assertEquals('t3://file?uid=25', $linkConfiguration['parameter']);
     }
 }

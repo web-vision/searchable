@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\LinkBuilder;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -29,7 +30,7 @@ class PageLinkBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function convertsFromViewHelperConfigToTypoLinkConfig()
+    public function convertsFromViewHelperConfigToTypoLinkConfig(): void
     {
         $this->pageLinkBuilder = new PageLinkBuilder();
 
@@ -67,6 +68,6 @@ class PageLinkBuilderTest extends UnitTestCase
 
         $typolinkConfig = $this->pageLinkBuilder->finalizeTypoLinkConfig($config, []);
 
-        $this->assertEquals($expectedTypolinkConfig, $typolinkConfig);
+        self::assertEquals($expectedTypolinkConfig, $typolinkConfig);
     }
 }

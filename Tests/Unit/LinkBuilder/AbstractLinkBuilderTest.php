@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\LinkBuilder;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -26,11 +27,8 @@ class AbstractLinkBuilderTest extends UnitTestCase
     /**
      * @test
      * @dataProvider languagesAndLinkConfigurations
-     *
-     * @param int $language
-     * @param array $expectedLinkConfiguration
      */
-    public function createsFixedLinkConfigurationWithLanguage($language, array $expectedLinkConfiguration)
+    public function createsFixedLinkConfigurationWithLanguage(int $language, array $expectedLinkConfiguration): void
     {
         $record = [];
 
@@ -48,13 +46,10 @@ class AbstractLinkBuilderTest extends UnitTestCase
         $this->linkBuilder = $this->getAccessibleMockForAbstractClass(AbstractLinkBuilder::class, ['config' => $configuration]);
         $linkConfiguration = $this->linkBuilder->createLinkConfiguration($record, $language);
 
-        $this->assertEquals($expectedLinkConfiguration, $linkConfiguration);
+        self::assertEquals($expectedLinkConfiguration, $linkConfiguration);
     }
 
-    /**
-     * @return array
-     */
-    public function languagesAndLinkConfigurations()
+    public function languagesAndLinkConfigurations(): array
     {
         return [
             'default language' => [
@@ -82,7 +77,7 @@ class AbstractLinkBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function replacesDynamicFields()
+    public function replacesDynamicFields(): void
     {
         $configuration = [
             'languageParam' => 'L',
@@ -102,14 +97,13 @@ class AbstractLinkBuilderTest extends UnitTestCase
             'pageUid' => '123',
         ];
 
-        $this->assertEquals($expectedLinkConfiguration, $linkConfiguration);
+        self::assertEquals($expectedLinkConfiguration, $linkConfiguration);
     }
-
 
     /**
      * @test
      */
-    public function replacesNestedDynamicFields()
+    public function replacesNestedDynamicFields(): void
     {
         $configuration = [
             'fixedParts' => [],
@@ -132,14 +126,14 @@ class AbstractLinkBuilderTest extends UnitTestCase
         $this->linkBuilder = $this->getAccessibleMockForAbstractClass(AbstractLinkBuilder::class, ['config' => $configuration]);
         $linkConfiguration = $this->linkBuilder->createLinkConfiguration($record, 0);
 
-        $this->assertSame('123', $linkConfiguration['pageUid'] ?? null);
-        $this->assertSame(['param1' => 'value1', 'param2' => 'value2'], $linkConfiguration['additionalParams'] ?? null);
+        self::assertSame('123', $linkConfiguration['pageUid'] ?? null);
+        self::assertSame(['param1' => 'value1', 'param2' => 'value2'], $linkConfiguration['additionalParams'] ?? null);
     }
 
     /**
      * @test
      */
-    public function unsetsEmptyDynamicFieldsAndUsesFixedPartInstead()
+    public function unsetsEmptyDynamicFieldsAndUsesFixedPartInstead(): void
     {
         $configuration = [
             'fixedParts' => [],
@@ -153,6 +147,6 @@ class AbstractLinkBuilderTest extends UnitTestCase
         $this->linkBuilder = $this->getAccessibleMockForAbstractClass(AbstractLinkBuilder::class, ['config' => $configuration]);
         $linkConfiguration = $this->linkBuilder->createLinkConfiguration($record, 0);
 
-        $this->assertSame('123', $linkConfiguration['pageUid'] ?? null);
+        self::assertSame('123', $linkConfiguration['pageUid'] ?? null);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Query;
 
 /*
@@ -26,9 +27,6 @@ class UpdateQuery extends AbstractQuery
         return $this->index;
     }
 
-    /**
-     * @return void
-     */
     public function __construct()
     {
         parent::__construct();
@@ -39,9 +37,8 @@ class UpdateQuery extends AbstractQuery
 
     /**
      * Creates the basic information for bulk indexing
-     * @return void
      */
-    public function init()
+    public function init(): void
     {
         $this->parameters =  [
             'index' => $this->getIndex(),
@@ -58,7 +55,7 @@ class UpdateQuery extends AbstractQuery
     public function addUpdate($type, $property, $id)
     {
         // Use querystring hash as id to mark each update only once
-        $docid = sha1($type . "." . $property . ":" . $id);
+        $docid = sha1($type . '.' . $property . ':' . $id);
 
         $this->parameters['id'] = $docid;
         $this->parameters['type'] = $type;
@@ -66,10 +63,9 @@ class UpdateQuery extends AbstractQuery
         $this->parameters['body']['uid'] = $id;
 
         try {
-              $response = $this->client->index($this->getParameters());
-              return $response;
+            return $this->client->index($this->getParameters());
         } catch (\Exception $e) {
-            $this->logger->error("Could not track update. Reason: " . $e->getMessage());
+            $this->logger->error('Could not track update. Reason: ' . $e->getMessage());
             return [];
         }
     }
@@ -93,7 +89,6 @@ class UpdateQuery extends AbstractQuery
             ],
         ];
 
-
         $result = $this->client->search($this->parameters);
 
         if (empty($result['hits']['hits'])) {
@@ -107,15 +102,15 @@ class UpdateQuery extends AbstractQuery
             if ($hit['_source']['property'] == 'uid') {
                 $recordids[$hit['_source']['uid']] = $hit['_source']['uid'];
             } else {
-                 $updateParams[] = [
-                    "term" => [
-                        $hit['_source']['property'] => $hit['_source']['uid'],
-                    ],
-                 ];
+                $updateParams[] = [
+                   'term' => [
+                       $hit['_source']['property'] => $hit['_source']['uid'],
+                   ],
+                ];
             }
         }
 
-        if (!empty($updateParams)) {
+        if ($updateParams !== []) {
             $this->parameters['index'] = $index;
             $this->parameters['body'] = [
                 '_source' => false,

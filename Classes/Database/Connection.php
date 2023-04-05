@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Database;
 
 /*
@@ -23,8 +24,6 @@ class Connection extends BaseConnection
 
     /**
      * Creates a new instance of a SQL query builder.
-     *
-     * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     public function createQueryBuilder(): BaseQueryBuilder
     {
@@ -106,9 +105,6 @@ class Connection extends BaseConnection
         return $result;
     }
 
-    /**
-     * @return DatabaseRecordUpdateQuery
-     */
     protected function getQuery(): DatabaseRecordUpdateQuery
     {
         if ($this->updateQuery == null) {

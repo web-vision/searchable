@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace PAGEmachine\Searchable\Tests\Functional\Middleware;
@@ -87,19 +88,16 @@ final class UriBuilderTest extends FunctionalTestCase
                 ],
             ]
         );
-        $result = json_decode((string)$response->getBody(), true);
+        $result = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $expected = [
             '/other-page/',
             '/some-page/',
             '/some-page/nested-page/',
         ];
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
-    /**
-     * @return void
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -107,9 +105,6 @@ final class UriBuilderTest extends FunctionalTestCase
         $this->startWebserver();
     }
 
-    /**
-     * @return void
-     */
     protected function tearDown(): void
     {
         $this->stopWebserver();

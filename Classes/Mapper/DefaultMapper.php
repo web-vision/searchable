@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Mapper;
 
 use PAGEmachine\Searchable\Service\ExtconfService;
@@ -40,10 +41,10 @@ class DefaultMapper implements MapperInterface
     /**
      * Returns the meta field mapping
      *
-     * @return array
+     * @return array{enabled: false}
      */
-    protected static function getMetaMapping()
+    protected static function getMetaMapping(): array
     {
-        return ["enabled" => false];
+        return ['enabled' => false];
     }
 }

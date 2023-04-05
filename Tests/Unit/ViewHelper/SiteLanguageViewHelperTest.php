@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\ViewHelper;
 
 /*
@@ -41,20 +42,20 @@ class SiteLanguageViewHelperTest extends TestCase
     /**
      * @test
      */
-    public function returnsCurrentLanguage()
+    public function returnsCurrentLanguage(): void
     {
         $GLOBALS['TSFE'] = $this->prophesize(TypoScriptFrontendController::class)->reveal();
 
         GeneralUtility::makeInstance(Context::class)->setAspect('language', new LanguageAspect(1));
 
-        $this->assertEquals(1, $this->viewHelper->render());
+        self::assertEquals(1, $this->viewHelper->render());
     }
 
     /**
      * @test
      */
-    public function returnsZeroIfTsfeDoesNotExist()
+    public function returnsZeroIfTsfeDoesNotExist(): void
     {
-        $this->assertEquals(0, $this->viewHelper->render());
+        self::assertEquals(0, $this->viewHelper->render());
     }
 }

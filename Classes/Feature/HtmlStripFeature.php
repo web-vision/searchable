@@ -1,12 +1,10 @@
 <?php
+
 namespace PAGEmachine\Searchable\Feature;
 
 /*
  * This file is part of the PAGEmachine Searchable project.
  */
-
-use PAGEmachine\Searchable\Feature\AbstractFeature;
-use PAGEmachine\Searchable\Feature\FeatureInterface;
 
 /**
  * Feature to strip HTML from all record fields
@@ -26,7 +24,7 @@ class HtmlStripFeature extends AbstractFeature implements FeatureInterface
      */
     public function modifyRecord($record)
     {
-        array_walk_recursive($record, function (&$value) {
+        array_walk_recursive($record, function (&$value): void {
             if (is_string($value)) {
                 $value = strip_tags($value);
             }

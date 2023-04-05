@@ -1,8 +1,11 @@
 <?php
+
 declare(strict_types = 1);
 
+use Pagemachine\SearchableExtbaseL10nTest\Domain\Model\Content;
+
 return [
-    \Pagemachine\SearchableExtbaseL10nTest\Domain\Model\Content::class => [
+    Content::class => [
         'tableName' => 'tt_content',
     ],
 ];

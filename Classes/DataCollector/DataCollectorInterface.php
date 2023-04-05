@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\DataCollector;
 
 /*
@@ -21,7 +22,6 @@ interface DataCollectorInterface
      * Adds a new SubCollector for subtypes
      *
      * @param string                 $field        Fieldname to apply this collector to
-     * @param DataCollectorInterface $subCollector
      */
     public function addSubCollector($field, DataCollectorInterface $subCollector);
 
@@ -32,7 +32,6 @@ interface DataCollectorInterface
      * @return DataCollectorInterface $subCollector
      */
     public function getSubCollectorForField($field);
-
 
     /**
      * Returns the merged configuration (default + custom)

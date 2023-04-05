@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Query;
 
 /*
@@ -25,13 +26,11 @@ class BulkQuery extends AbstractQuery
 
     /**
      * @param string $index
-     * @return void
      */
-    public function setIndex($index)
+    public function setIndex($index): void
     {
         $this->index = $index;
     }
-
 
     /**
      * @var string $type
@@ -46,15 +45,10 @@ class BulkQuery extends AbstractQuery
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return void
-     */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
-
 
     /**
      * @var string $pipeline
@@ -71,9 +65,8 @@ class BulkQuery extends AbstractQuery
 
     /**
      * @param string $pipeline
-     * @return void
      */
-    public function setPipeline($pipeline)
+    public function setPipeline($pipeline): void
     {
         $this->pipeline = $pipeline;
     }
@@ -95,9 +88,8 @@ class BulkQuery extends AbstractQuery
 
     /**
      * Creates the basic information for bulk indexing
-     * @return void
      */
-    public function init()
+    public function init(): void
     {
         $this->parameters =  [
             'index' => $this->getIndex(),
@@ -115,10 +107,8 @@ class BulkQuery extends AbstractQuery
      *
      * @param int $uid The uid of the current record
      * @param array $body
-     *
-     * @return void
      */
-    public function addRow($uid, $body)
+    public function addRow($uid, $body): void
     {
         //Build meta row for new row
         $this->parameters['body'][] = [
@@ -133,7 +123,7 @@ class BulkQuery extends AbstractQuery
         $this->parameters['body'][] = $body;
     }
 
-    public function addRows($uidField, $records)
+    public function addRows($uidField, $records): void
     {
         foreach ($records as $record) {
             $this->addRow($record[$uidField], $record);
@@ -150,14 +140,10 @@ class BulkQuery extends AbstractQuery
         $response = [];
 
         if (!empty($this->parameters['body'])) {
-
-            /**
-             * @var array
-             */
             $response = $this->client->bulk($this->getParameters());
 
             if ($response['errors']) {
-                $this->logger->error("Bulk Query response contains errors: ", $response);
+                $this->logger->error('Bulk Query response contains errors: ', $response);
             }
         }
 
@@ -169,9 +155,8 @@ class BulkQuery extends AbstractQuery
      * @todo move this away from the bulkquery (does not fit its domain)
      *
      * @param  int $id
-     * @return void
      */
-    public function delete($id)
+    public function delete($id): void
     {
         $params = [
             'index' => $this->index,
@@ -183,17 +168,15 @@ class BulkQuery extends AbstractQuery
             $response = $this->client->delete($params);
 
             if ($response['errors']) {
-                $this->logger->error("Delete Query response contains errors: ", $response);
+                $this->logger->error('Delete Query response contains errors: ', $response);
             }
         }
     }
 
     /**
      * Resets the body (for batch indexing)
-     *
-     * @return void
      */
-    public function resetBody()
+    public function resetBody(): void
     {
         $this->parameters['body'] = [];
     }

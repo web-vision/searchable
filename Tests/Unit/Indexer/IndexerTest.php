@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\Indexer;
 
 /*
@@ -21,13 +22,14 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 class IndexerTest extends UnitTestCase
 {
     use ProphecyTrait;
+    public $indexer;
 
     /**
      * Set up this testcase
      */
     protected function setUp(): void
     {
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['metaField'] = "_meta";
+        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['searchable']['metaField'] = '_meta';
     }
     /**
      * Tear down this testcase
@@ -40,10 +42,10 @@ class IndexerTest extends UnitTestCase
     /**
      * @test
      */
-    public function skipsEmptyRecordsFromDataCollector()
+    public function skipsEmptyRecordsFromDataCollector(): void
     {
         $dataCollector = $this->prophesize(DataCollectorInterface::class);
-        $dataCollectorClassName = get_class($dataCollector->reveal());
+        $dataCollectorClassName = $dataCollector->reveal()::class;
         $config = [
             'collector' => [
                 'className' => $dataCollectorClassName,
@@ -64,7 +66,7 @@ class IndexerTest extends UnitTestCase
 
         $this->indexer = new Indexer('test', 1, $config, $query->reveal(), $objectManager->reveal());
 
-        $dataCollector->getRecords()->will(function () {
+        $dataCollector->getRecords()->will(function (): \Generator {
             yield [
                 'uid' => 1,
             ];
@@ -75,7 +77,7 @@ class IndexerTest extends UnitTestCase
         });
 
         foreach ($this->indexer->run() as $overallCounter) {
-            $this->assertEquals(2, $overallCounter);
+            self::assertEquals(2, $overallCounter);
         }
     }
 }

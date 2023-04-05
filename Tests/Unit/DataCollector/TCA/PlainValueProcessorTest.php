@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\DataCollector\TCA;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -29,7 +30,7 @@ class PlainValueProcessorTest extends UnitTestCase
     /**
      * @test
      */
-    public function convertsCheckboxValues()
+    public function convertsCheckboxValues(): void
     {
         $fieldTca = [
             'type' => 'check',
@@ -47,13 +48,13 @@ class PlainValueProcessorTest extends UnitTestCase
 
         $output = $this->plainValueProcessor->processCheckboxField($value, $fieldTca);
 
-        $this->assertEquals($expectedOutput, $output);
+        self::assertEquals($expectedOutput, $output);
     }
 
     /**
      * @test
      */
-    public function convertsRadioValues()
+    public function convertsRadioValues(): void
     {
         $fieldTca = [
             'type' => 'radio',
@@ -66,17 +67,17 @@ class PlainValueProcessorTest extends UnitTestCase
 
         $value = 2;
 
-        $expectedOutput = "baz";
+        $expectedOutput = 'baz';
 
         $output = $this->plainValueProcessor->processRadioField($value, $fieldTca);
 
-        $this->assertEquals($expectedOutput, $output);
+        self::assertEquals($expectedOutput, $output);
     }
 
     /**
      * @test
      */
-    public function convertsStringRadioValues()
+    public function convertsStringRadioValues(): void
     {
         $fieldTca = [
             'type' => 'radio',
@@ -88,10 +89,10 @@ class PlainValueProcessorTest extends UnitTestCase
 
         $value = 'bazvalue';
 
-        $expectedOutput = "bazlabel";
+        $expectedOutput = 'bazlabel';
 
         $output = $this->plainValueProcessor->processRadioField($value, $fieldTca);
 
-        $this->assertEquals($expectedOutput, $output);
+        self::assertEquals($expectedOutput, $output);
     }
 }

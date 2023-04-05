@@ -1,10 +1,13 @@
 <?php
+
 namespace PAGEmachine\Searchable\Indexer;
 
 /*
  * This file is part of the PAGEmachine Searchable project.
  */
-
+use PAGEmachine\Searchable\DataCollector\FileDataCollector;
+use PAGEmachine\Searchable\LinkBuilder\FileLinkBuilder;
+use PAGEmachine\Searchable\Mapper\DefaultMapper;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -21,13 +24,13 @@ class FileIndexer extends TcaIndexer
         'fileField' => 'file',
         'bulkSize' => 2,
         'collector' => [
-            'className' => \PAGEmachine\Searchable\DataCollector\FileDataCollector::class,
+            'className' => FileDataCollector::class,
         ],
         'link' => [
-            'className' => \PAGEmachine\Searchable\LinkBuilder\FileLinkBuilder::class,
+            'className' => FileLinkBuilder::class,
         ],
         'mapper' => [
-            'className' => \PAGEmachine\Searchable\Mapper\DefaultMapper::class,
+            'className' => DefaultMapper::class,
         ],
         'mapping' => [
             '_all' => [
@@ -40,7 +43,6 @@ class FileIndexer extends TcaIndexer
      * Sends a batch
      *
      * @param  array $records
-     * @return void
      */
     protected function sendBatch($records)
     {
@@ -56,7 +58,7 @@ class FileIndexer extends TcaIndexer
                     try {
                         $records[$key]['attachments'][] = [
                             'filename' => $file->getProperty('name'),
-                            'data' => base64_encode($file->getContents()),
+                            'data' => base64_encode((string)$file->getContents()),
                         ];
                     } catch (\Exception $e) {
                         // The actual file on disk does not exist for this file record.

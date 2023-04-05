@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Tests\Unit\DataCollector\Utility;
 
 /*
@@ -21,7 +22,7 @@ class OverlayUtilityTest extends UnitTestCase
      * @test
      * @dataProvider pagesToOverlay
      */
-    public function performsPagesLanguageOverlay(array $page, $language, $overlayMode, $pageOverlay, $expected)
+    public function performsPagesLanguageOverlay(array $page, int $language, int $overlayMode, array $pageOverlay, array $expected): void
     {
         $pageRepository = $this->prophesize(PageRepository::class);
         $overlayUtility = $this->getMockBuilder(OverlayUtility::class)
@@ -34,13 +35,10 @@ class OverlayUtilityTest extends UnitTestCase
 
         $result = $overlayUtility->pagesLanguageOverlay($page, $language, $overlayMode);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function pagesToOverlay()
+    public function pagesToOverlay(): array
     {
         return [
             'regular' => [

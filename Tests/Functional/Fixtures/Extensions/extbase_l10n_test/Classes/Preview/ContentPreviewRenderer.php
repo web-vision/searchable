@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace Pagemachine\SearchableExtbaseL10nTest\Preview;
@@ -12,19 +13,17 @@ final class ContentPreviewRenderer implements PreviewRendererInterface
 {
     /**
      * @param  array $record
-     * @return string
      */
-    public function render($record)
+    public function render($record): string
     {
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $repository = $objectManager->get(ContentRepository::class);
         $content = $repository->findByIdentifier($record['uid']);
-        $preview = sprintf(
+
+        return sprintf(
             'Preview: %s [%d]',
             $content->getHeader(),
             $content->_getProperty('_localizedUid')
         );
-
-        return $preview;
     }
 }

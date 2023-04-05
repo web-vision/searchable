@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Preview;
 
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -18,9 +19,6 @@ class FluidPreviewRenderer extends AbstractPreviewRenderer implements PreviewRen
      */
     protected $view;
 
-    /**
-     * @param StandaloneView $view
-     */
     public function injectView(StandaloneView $view): void
     {
         $this->view = $view;
@@ -31,9 +29,6 @@ class FluidPreviewRenderer extends AbstractPreviewRenderer implements PreviewRen
      */
     protected $configurationManager;
 
-    /**
-     * @param ConfigurationManagerInterface $configurationManager
-     */
     public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
@@ -47,10 +42,7 @@ class FluidPreviewRenderer extends AbstractPreviewRenderer implements PreviewRen
 
     ];
 
-    /**
-     * @return void
-     */
-    public function initializeObject()
+    public function initializeObject(): void
     {
         $this->prepareView();
     }
@@ -72,18 +64,14 @@ class FluidPreviewRenderer extends AbstractPreviewRenderer implements PreviewRen
                 }
             }
 
-            $this->view->assign("fields", $assignFields);
+            $this->view->assign('fields', $assignFields);
         }
 
-        $preview = $this->view->render();
-
-        return $preview;
+        return $this->view->render();
     }
-
 
     /**
      * Prepares the view
-     * @return void
      */
     protected function prepareView()
     {

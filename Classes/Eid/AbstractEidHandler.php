@@ -1,4 +1,5 @@
 <?php
+
 namespace PAGEmachine\Searchable\Eid;
 
 use Psr\Http\Message\ResponseInterface;
@@ -23,8 +24,6 @@ abstract class AbstractEidHandler
 
     /**
      * Process request
-     *
-     * @param ServerRequestInterface $request
      */
     public function processRequest(ServerRequestInterface $request): ResponseInterface
     {
@@ -34,7 +33,7 @@ abstract class AbstractEidHandler
         $result = $this->getResults($term);
 
         $response = (new Response())->withHeader('Content-Type', 'application/json; charset=utf-8');
-        $response->getBody()->write(json_encode($result));
+        $response->getBody()->write(json_encode($result, JSON_THROW_ON_ERROR));
 
         return $response;
     }
